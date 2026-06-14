@@ -5,112 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0A0A0A">
 <title>Voyager Magazine</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C9A96E' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolygon points='16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88'/%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
 
-:root{
-  --gold:#C9A96E;--gold2:#D4B87A;
-  --bg:#0A0A0A;--surface:#141414;--surface2:#1A1A1A;
-  --text:#F2EDE4;--text2:#8A8A8A;
-  --glass:rgba(255,255,255,0.05);--glassB:rgba(255,255,255,0.1);
-  --nav:rgba(10,10,10,0.9);--navB:rgba(255,255,255,0.06);
-}
-:root.light{
-  --bg:#F2EDE4;--surface:#FFFFFF;--surface2:#F7F5F0;
-  --text:#0A0A0A;--text2:#6B6B6B;
-  --glass:rgba(255,255,255,0.6);--glassB:rgba(0,0,0,0.06);
-  --nav:rgba(242,237,228,0.9);--navB:rgba(0,0,0,0.06);
-}
+:root{--gold:#C9A96E;--gold2:#D4B87A;--bg:#0A0A0A;--surface:#141414;--surface2:#1A1A1A;--text:#F2EDE4;--text2:#8A8A8A;--glass:rgba(255,255,255,0.05);--glassB:rgba(255,255,255,0.1);--nav:rgba(10,10,10,0.9);--navB:rgba(255,255,255,0.06);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden}
-body{background:#0A0A0A;font-family:'Inter',sans-serif;color:var(--text);transition:background 0.3s}
-body.light{background:#E8E3DA}
+html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0A;font-family:'Inter',sans-serif;color:var(--text)}
 
-/* ===== PHONE CONTAINER ===== */
-.phone{
-  width:100vw;height:100vh;
-  position:fixed;top:0;left:0;
-  background:var(--bg);
-  overflow:hidden;
-  transition:background 0.3s;
-}
-@media(min-width:431px){
-  .phone{
-    width:393px;height:852px;
-    position:relative;
-    top:auto;left:auto;
-    border-radius:40px;
-    border:1px solid rgba(255,255,255,0.15);
-    box-shadow:0 25px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05);
-    margin:0 auto;
-  }
-  body{display:flex;align-items:center;justify-content:center}
-}
+.phone{width:100vw;height:100vh;position:fixed;top:0;left:0;background:var(--bg);overflow:hidden}
+@media(min-width:431px){.phone{width:393px;height:852px;position:relative;border-radius:40px;border:1px solid rgba(255,255,255,0.15);box-shadow:0 25px 80px rgba(0,0,0,0.6);margin:auto}body{display:flex;align-items:center;justify-content:center;height:100vh}}
 
-/* ===== SCREENS ===== */
-.screen{
-  position:absolute;inset:0;
-  display:none;flex-direction:column;
-  background:var(--bg);
-  transition:background 0.3s;
-}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);overflow:hidden}
 .screen.active{display:flex}
-.scroll{
-  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:90px;
-}
+.scroll{flex:1;overflow-y:auto;padding-bottom:80px}
 .scroll::-webkit-scrollbar{display:none}
 
-/* ===== SPLASH ===== */
-#splash{z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity 0.5s}
-#splash h1{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;letter-spacing:0.15em;color:var(--gold)}
-#splash p{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--text2)}
-.sdot{display:flex;gap:6px;margin-top:12px}
-.sdot span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:db 0.6s ease-in-out infinite}
-.sdot span:nth-child(2){animation-delay:0.15s}
-.sdot span:nth-child(3){animation-delay:0.3s}
-@keyframes db{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
-
-/* ===== HEADER ===== */
-.hdr{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px 8px;
-  background:linear-gradient(to bottom,var(--bg) 70%,transparent);
-}
+/* Header */
+.hdr{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;background:linear-gradient(to bottom,var(--bg) 70%,transparent)}
 .hdr h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;letter-spacing:0.2em;color:var(--gold);text-align:center;flex:1}
 .hdr .sp{width:36px}
-.ib{
-  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--glass);backdrop-filter:blur(20px);
-  border:1px solid var(--glassB);position:relative;z-index:10;
-}
+.ib{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glassB);position:relative;z-index:10}
 
-/* ===== HERO ===== */
+/* Hero */
 .hero{position:relative;width:100%;height:420px;overflow:hidden;cursor:pointer}
 .hero img{width:100%;height:100%;object-fit:cover}
 .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.1) 100%)}
-:root.light .hero::after{background:linear-gradient(to top,rgba(242,237,228,0.92) 0%,rgba(242,237,228,0.3) 50%,rgba(242,237,228,0.1) 100%)}
-.hp{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:56px;height:56px;border-radius:50%;
-  background:rgba(201,169,110,0.9);border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;z-index:5;
-  box-shadow:0 4px 20px rgba(201,169,110,0.4);
-}
+.hp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(201,169,110,0.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:0 4px 20px rgba(201,169,110,0.4)}
 .hp svg{stroke:#0A0A0A}
 .hc{position:absolute;bottom:0;left:0;right:0;padding:20px 16px;z-index:5}
 .tag{display:inline-block;padding:4px 12px;background:var(--gold);color:#0A0A0A;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;border-radius:20px;margin-bottom:8px}
 .hero h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1.15;margin-bottom:8px;color:#fff}
 .meta{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
 
-/* ===== SECTION LABEL ===== */
+/* Section labels */
 .sl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text2);padding:24px 16px 12px}
 
-/* ===== HORIZONTAL SCROLL ===== */
-.hs{display:flex;gap:12px;overflow-x:auto;padding:0 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+/* Horizontal scroll */
+.hs{display:flex;gap:12px;overflow-x:auto;padding:0 16px;scroll-snap-type:x mandatory}
 .hs::-webkit-scrollbar{display:none}
 .hc2{flex:0 0 280px;scroll-snap-align:start;cursor:pointer}
 .hci{width:100%;height:220px;border-radius:16px;overflow:hidden;position:relative;margin-bottom:8px}
@@ -120,12 +51,8 @@ body.light{background:#E8E3DA}
 .hc2 h4{font-size:14px;font-weight:600;margin-top:4px;line-height:1.3;color:var(--text)}
 .hc2 .rd{font-size:11px;color:var(--text2);margin-top:4px}
 
-/* ===== VERTICAL CARDS ===== */
-.vc{
-  display:flex;gap:12px;padding:12px;margin:0 16px 8px;
-  background:var(--glass);backdrop-filter:blur(20px);
-  border:1px solid var(--glassB);border-radius:16px;cursor:pointer;
-}
+/* Vertical cards */
+.vc{display:flex;gap:12px;padding:12px;margin:0 16px 8px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glassB);border-radius:16px;cursor:pointer}
 .vci{width:80px;height:80px;border-radius:12px;overflow:hidden;flex-shrink:0}
 .vci img{width:100%;height:100%;object-fit:cover}
 .vb{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
@@ -133,69 +60,34 @@ body.light{background:#E8E3DA}
 .vb h4{font-size:14px;font-weight:600;margin-top:2px;line-height:1.3;color:var(--text)}
 .vb .rd{font-size:11px;color:var(--text2);margin-top:4px}
 
-/* ===== AD ===== */
-.ad{
-  margin:0 16px 12px;padding:16px;
-  background:var(--glass);backdrop-filter:blur(20px);
-  border:1px solid var(--glassB);border-radius:16px;
-}
+/* Ad */
+.ad{margin:0 16px 12px;padding:16px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glassB);border-radius:16px}
 .ad-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:8px}
 .ad-img{width:100%;height:140px;border-radius:12px;overflow:hidden;margin-bottom:10px}
 .ad-img img{width:100%;height:100%;object-fit:cover}
 .ad h4{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
 .ad p{font-size:12px;color:var(--text2);margin-bottom:10px}
-.ad-btn{
-  width:100%;height:40px;border-radius:12px;background:var(--gold);color:#0A0A0A;
-  font-size:13px;font-weight:600;border:none;cursor:pointer;
-}
+.ad-btn{width:100%;height:40px;border-radius:12px;background:var(--gold);color:#0A0A0A;font-size:13px;font-weight:600;border:none;cursor:pointer}
 
-/* ===== NAV ===== */
-.nav{
-  position:absolute;bottom:0;left:0;right:0;z-index:100;
-  height:72px;padding:0 8px 4px;
-  display:flex;align-items:center;justify-content:space-around;
-  background:var(--nav);backdrop-filter:blur(20px);
-  border-top:1px solid var(--navB);
-}
-.nb{
-  display:flex;flex-direction:column;align-items:center;gap:2px;
-  padding:6px 12px;cursor:pointer;background:none;border:none;position:relative;z-index:10;
-}
+/* Bottom Nav */
+.nav{position:absolute;bottom:0;left:0;right:0;z-index:100;height:72px;padding:0 8px 4px;display:flex;align-items:center;justify-content:space-around;background:var(--nav);backdrop-filter:blur(20px);border-top:1px solid var(--navB)}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;cursor:pointer;background:none;border:none;position:relative;z-index:10}
 .nb svg{width:22px;height:22px;stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nb.active svg{stroke:var(--gold)}
 .nb span{font-size:10px;font-weight:500;color:var(--text2)}
 .nb.active span{color:var(--gold)}
-.no{
-  width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  display:flex;align-items:center;justify-content:center;
-  margin-top:-18px;box-shadow:0 6px 24px rgba(201,169,110,0.4);
-  animation:op 3s ease-in-out infinite;position:relative;z-index:10;
-}
+.no{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 6px 24px rgba(201,169,110,0.4);position:relative;z-index:10}
 .no svg{width:24px;height:24px;stroke:#0A0A0A;fill:none;stroke-width:2}
-@keyframes op{0%,100%{transform:scale(1);box-shadow:0 6px 24px rgba(201,169,110,0.4)}50%{transform:scale(1.08);box-shadow:0 8px 32px rgba(201,169,110,0.55)}}
 
-/* ===== READER ===== */
-.reader{
-  position:absolute;inset:0;z-index:500;
-  background:var(--bg);
-  transform:translateY(100%);
-  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  display:flex;flex-direction:column;
-}
+/* Reader */
+.reader{position:absolute;inset:0;z-index:500;background:var(--bg);transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column}
 .reader.open{transform:translateY(0)}
-.rs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative}
+.rs{flex:1;overflow-y:auto;position:relative}
 .rs::-webkit-scrollbar{display:none}
 .rh{position:relative;width:100%;height:300px;overflow:hidden}
-.rh iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .rh img{width:100%;height:100%;object-fit:cover}
 .rh::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.3) 60%,transparent)}
-:root.light .rh::after{background:linear-gradient(to top,rgba(242,237,228,0.95) 0%,rgba(242,237,228,0.3) 60%,transparent)}
-.rt{
-  position:absolute;top:0;left:0;right:0;
-  display:flex;justify-content:space-between;
-  padding:48px 16px 0;z-index:10;
-}
+.rt{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:48px 16px 0;z-index:10}
 .rb{padding:0 16px 40px;margin-top:-30px;position:relative;z-index:5}
 .rb h1{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.15;margin-bottom:8px;color:var(--text)}
 .rb .rmeta{font-size:12px;color:var(--text2);margin-bottom:20px}
@@ -205,45 +97,27 @@ body.light{background:#E8E3DA}
 .rb .in-img{width:100%;height:200px;border-radius:12px;overflow:hidden;margin:16px 0}
 .rb .in-img img{width:100%;height:100%;object-fit:cover}
 
-/* ===== PAYWALL ===== */
-.pw{
-  position:absolute;inset:0;z-index:600;
-  display:none;flex-direction:column;justify-content:flex-end;
-}
+/* Paywall */
+.pw{position:absolute;inset:0;z-index:600;display:none;flex-direction:column;justify-content:flex-end}
 .pw.s{display:flex}
-.pwb{position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(8px)}
-.pwx{
-  position:relative;background:var(--surface);
-  border-radius:32px 32px 0 0;padding:24px;
-  animation:su 0.4s cubic-bezier(0.16,1,0.3,1);
-}
+.pwb{position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px)}
+.pwx{position:relative;background:var(--surface);border-radius:32px 32px 0 0;padding:24px;animation:su 0.4s cubic-bezier(0.16,1,0.3,1)}
 @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .ppill{width:40px;height:4px;border-radius:2px;background:var(--text2);margin:0 auto 20px;opacity:0.5}
 .pwx h3{font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:4px;color:var(--text)}
 .pwx>p{font-size:13px;color:var(--text2);margin-bottom:16px}
-.pt{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:16px;margin-bottom:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);transition:all 0.2s}
+.pt{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:16px;margin-bottom:8px;cursor:pointer;border:1px solid var(--glassB);background:var(--surface2);transition:all 0.2s}
 .pt.sel{border-color:var(--gold);background:rgba(201,169,110,0.08)}
 .pt .pn{font-size:14px;font-weight:600;color:var(--text)}
 .pt .pd{font-size:12px;color:var(--text2);margin-top:2px}
 .pt .pp{font-size:18px;font-weight:600;color:var(--gold)}
 .c2{width:100%;height:48px;border-radius:16px;background:var(--gold);color:#0A0A0A;font-size:15px;font-weight:600;border:none;cursor:pointer;margin-top:8px}
-.c2:disabled{opacity:0.4}
 .c3{width:100%;height:40px;background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;margin-top:4px}
 
-/* ===== AI ===== */
-.ai{
-  position:absolute;inset:0;z-index:550;
-  background:var(--bg);
-  transform:translateY(100%);
-  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  display:flex;flex-direction:column;
-}
+/* AI Brain */
+.ai{position:absolute;inset:0;z-index:550;background:var(--bg);transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column}
 .ai.o{transform:translateY(0)}
-.ah{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:48px 16px 12px;border-bottom:1px solid var(--navB);
-  background:var(--nav);backdrop-filter:blur(20px);
-}
+.ah{display:flex;align-items:center;justify-content:space-between;padding:48px 16px 12px;border-bottom:1px solid var(--navB);background:var(--nav);backdrop-filter:blur(20px)}
 .ahl{display:flex;align-items:center;gap:10px}
 .adot{width:8px;height:8px;border-radius:50%;background:#4ADE80;animation:pd 2s ease-in-out infinite}
 @keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
@@ -260,17 +134,19 @@ body.light{background:#E8E3DA}
 .asrc h5{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
 .asrc p{font-size:10px;color:var(--text2);line-height:1.3}
 .asrc .sc{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px}
-.adts{display:flex;gap:4px}
+.adts{display:flex;gap:4px;padding:8px 0}
 .adts span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:db 0.6s ease-in-out infinite}
+.adts span:nth-child(2){animation-delay:0.15s}
+.adts span:nth-child(3){animation-delay:0.3s}
+@keyframes db{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 .ai2{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--navB);background:var(--nav);backdrop-filter:blur(20px)}
-.ai2 input{flex:1;height:40px;border-radius:18px;border:1px solid var(--border);background:var(--surface2);padding:0 14px;font-size:14px;outline:none;color:var(--text)}
+.ai2 input{flex:1;height:40px;border-radius:18px;border:1px solid var(--glassB);background:var(--surface2);padding:0 14px;font-size:14px;outline:none;color:var(--text)}
 .ai2 input::placeholder{color:var(--text2)}
 .as2{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .as2 svg{stroke:#0A0A0A;width:16px;height:16px}
 
-/* ===== PROFILE ===== */
+/* Profile */
 .pcov{position:relative;height:160px;background:linear-gradient(to bottom right,var(--gold),#0A0A0A)}
-.pov2{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.3))}
 .pav{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:-36px}
 .pav2{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid var(--gold);background:var(--surface2)}
 .pav2 img{width:100%;height:100%;object-fit:cover}
@@ -281,15 +157,23 @@ body.light{background:#E8E3DA}
 .pst>div{text-align:center}
 .pvn{font-size:16px;font-weight:600;color:var(--text)}
 .plb{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.psec{margin-top:24px;padding:0 16px}
+.psec h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:12px}
 
-/* ===== CATEGORIES ===== */
+/* Explore */
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px}
-.cc{position:relative;height:90px;border-radius:14px;overflow:hidden;cursor:pointer}
+.cc{position:relative;height:100px;border-radius:14px;overflow:hidden;cursor:pointer}
 .cc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cc::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7),rgba(0,0,0,0.2))}
 .cc span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;z-index:2}
 
-/* ===== ANIMATIONS ===== */
+/* Saved empty state */
+.empty{text-align:center;padding:60px 16px}
+.empty svg{width:48px;height:48px;stroke:var(--text2);margin-bottom:16px}
+.empty h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:8px}
+.empty p{font-size:14px;color:var(--text2)}
+
+/* Animations */
 .fi{animation:fi 0.4s ease forwards;opacity:0}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 </style>
@@ -298,28 +182,21 @@ body.light{background:#E8E3DA}
 
 <div class="phone" id="phone">
 
-<!-- ===== SPLASH ===== -->
-<div class="screen active" id="splash">
-  <h1>VOYAGER</h1>
-  <p>Stories that move you</p>
-  <div class="sdot"><span></span><span></span><span></span></div>
-</div>
-
-<!-- ===== HOME ===== -->
-<div class="screen" id="home">
+<!-- HOME -->
+<div class="screen active" id="home">
   <div class="scroll">
     <div class="hdr">
       <div class="sp"></div>
       <h2>VOYAGER</h2>
-      <button class="ib" id="themeBtn" aria-label="Toggle theme">
+      <button class="ib" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
     </div>
 
     <!-- Hero -->
     <div class="hero" onclick="openArticle(0)">
-      <img src="obi-cubana.jpg" alt="Obi Cubana">
-      <button class="hp" onclick="event.stopPropagation();openArticle(0)" aria-label="Play video">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Obi Cubana">
+      <button class="hp" onclick="event.stopPropagation();openArticle(0)" aria-label="Play">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
       </button>
       <div class="hc">
@@ -329,46 +206,78 @@ body.light{background:#E8E3DA}
       </div>
     </div>
 
-    <!-- Trending Now -->
+    <!-- Trending -->
     <div class="sl">Trending Now</div>
     <div class="hs">
       <div class="hc2" onclick="openArticle(2)">
-        <div class="hci"><img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&q=80" alt="Greenland" loading="lazy"></div>
+        <div class="hci"><img src="https://images.unsplash.com/photo-1520769945061-0a448c463865?w=600&q=80" alt="Greenland"></div>
         <div class="cat">Travel</div>
         <h4>Glimmers of Ice and Tomorrow in West Greenland</h4>
         <div class="rd">8 min read</div>
       </div>
       <div class="hc2" onclick="openArticle(1)">
-        <div class="hci"><img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=600&q=80" alt="Monaco harbor" loading="lazy"></div>
+        <div class="hci"><img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=600&q=80" alt="Monaco"></div>
         <div class="cat">Travel</div>
         <h4>Monaco: Where the Mediterranean Meets Majesty</h4>
         <div class="rd">8 min read</div>
       </div>
       <div class="hc2" onclick="openArticle(3)">
-        <div class="hci"><img src="https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&q=80" alt="Kano" loading="lazy"></div>
+        <div class="hci"><img src="https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&q=80" alt="Kano"></div>
         <div class="cat">Culture</div>
         <h4>The Weavers of Kano: A Century of Silk and Story</h4>
         <div class="rd">12 min read</div>
       </div>
     </div>
 
-    <!-- Ad 1: Home Feed -->
+    <!-- Ad 1 -->
     <div class="ad fi">
       <div class="ad-label">Sponsored</div>
-      <div class="ad-img"><img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600&q=80" alt="Morocco riad"></div>
+      <div class="ad-img"><img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600&q=80" alt="Morocco"></div>
       <h4>WhiteLion Voyage — Morocco Luxury Escape</h4>
       <p>7 nights in a private riad with chef & butler. Marrakech + Sahara.</p>
       <button class="ad-btn" onclick="event.stopPropagation()">Book Now</button>
     </div>
 
-    <!-- Latest Stories -->
+    <!-- Latest -->
     <div class="sl">Latest Stories</div>
     <div class="vc" onclick="openArticle(0)">
-      <div class="vci"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80" alt="Obi Cubana" loading="lazy"></div>
+      <div class="vci"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Obi Cubana"></div>
       <div class="vb"><div class="cat">Culture</div><h4>Obi Cubana: A Legacy of Influence in Nigerian Business</h4><div class="rd">Voyager Editorial &middot; 10 min</div></div>
     </div>
     <div class="vc" onclick="openArticle(1)">
-      <div class="vci"><img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=400&q=80" alt="Monaco harbor" loading="lazy"></div>
+      <div class="vci"><img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=400&q=80" alt="Monaco"></div>
       <div class="vb"><div class="cat">Travel</div><h4>Monaco: Where the Mediterranean Meets Majesty</h4><div class="rd">Amara Okafor &middot; 8 min</div></div>
     </div>
-  
+    <div class="vc" onclick="openArticle(2)">
+      <div class="vci"><img src="https://images.unsplash.com/photo-1520769945061-0a448c463865?w=400&q=80" alt="Greenland"></div>
+      <div class="vb"><div class="cat">Travel</div><h4>Glimmers of Ice and Tomorrow in West Greenland</h4><div class="rd">Amara Okafor &middot; 8 min</div></div>
+    </div>
+    <div class="vc" onclick="openArticle(3)">
+      <div class="vci"><img src="https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&q=80" alt="Kano"></div>
+      <div class="vb"><div class="cat">Culture</div><h4>The Weavers of Kano: A Century of Silk and Story</h4><div class="rd">Ibrahim Suleiman &middot; 12 min</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPLORE -->
+<div class="screen" id="explore">
+  <div class="scroll">
+    <div class="hdr">
+      <button class="ib" onclick="goHome()" style="position:absolute;left:16px;top:12px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg></button>
+      <h2 style="flex:1;text-align:center;">Explore</h2>
+      <div class="sp"></div>
+    </div>
+    <div class="cg">
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" alt="Travel"><span>Travel</span></div>
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80" alt="Culture"><span>Culture</span></div>
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" alt="Food"><span>Food</span></div>
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80" alt="Fashion"><span>Fashion</span></div>
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80" alt="Architecture"><span>Architecture</span></div>
+      <div class="cc" onclick="goHome()"><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=400&q=80" alt="Wellness"><span>Wellness</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SAVED -->
+<div class="screen" id="saved">
+  <div c
