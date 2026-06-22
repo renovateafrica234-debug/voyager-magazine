@@ -1,6 +1,3 @@
-// lib/database.types.ts — Minimal Supabase types for Voyager Magazine
-// Replace with full generated types via `supabase gen types typescript` when you have CLI access
-
 export interface Database {
   public: {
     Tables: {
