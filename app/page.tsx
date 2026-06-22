@@ -391,5 +391,5 @@ function BottomNav() {
       </div>
     </nav>
   );
-      }
-  
+           }
+    
