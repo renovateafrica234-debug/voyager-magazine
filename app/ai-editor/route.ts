@@ -1,4 +1,4 @@
-// app/api/ai-editor/route.ts — Admin-gated AI Editor
+// app/ai-editor/route.ts — Admin-gated AI Editor
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 
@@ -160,5 +160,5 @@ Answer based on the archive. If the archive doesn't contain the answer, say so h
       { status: 500 }
     );
   }
-        }
-                                 
+}
+  
