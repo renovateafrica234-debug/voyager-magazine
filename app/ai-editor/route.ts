@@ -30,14 +30,14 @@ export async function POST(req: NextRequest) {
     const { mode, message, articleId, articleSlug, history } = await req.json();
 
     let articleContext = "";
-    let articleData = null;
+    let articleData: any = null;
 
     if (articleId || articleSlug) {
       const { data } = await supabase
         .from("articles")
         .select("id, slug, title, content, excerpt, category:categories(name)")
         .or(`id.eq.${articleId},slug.eq.${articleSlug}`)
-        .single();
+        .single() as any;
 
       if (data) {
         articleData = data;
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         .from("articles")
         .select("title, excerpt, content")
         .textSearch("title", message.split(" ").slice(0, 3).join(" & "), { type: "websearch" })
-        .limit(3);
+        .limit(3) as any;
 
       const archiveContext = (relatedArticles || [])
         .map((a: any) => "ARTICLE: " + a.title + BR + a.excerpt + BR + a.content.slice(0, 800))
@@ -129,5 +129,5 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-        }
-             
+              }
+              
