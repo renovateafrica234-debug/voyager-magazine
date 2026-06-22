@@ -171,5 +171,5 @@ input:focus-visible {
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
+                                      }
+    
