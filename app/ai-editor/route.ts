@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       .from("profiles")
       .select("is_admin")
       .eq("id", user.id)
-      .single();
+      .single() as any;
 
     if (!profile?.is_admin) {
       return NextResponse.json({ error: "Admin access required." }, { status: 403 });
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         .limit(3);
 
       const archiveContext = (relatedArticles || [])
-        .map((a) => "ARTICLE: " + a.title + BR + a.excerpt + BR + a.content.slice(0, 800))
+        .map((a: any) => "ARTICLE: " + a.title + BR + a.excerpt + BR + a.content.slice(0, 800))
         .join(BR + BR);
 
       systemPrompt = "You are the Voyager Magazine Editor. You have access to the following article archive:" + BR + BR + archiveContext + BR + BR + "Answer based on the archive. If the archive doesn't contain the answer, say so honestly. Be concise, elegant, and knowledgeable.";
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
             suggested_content: parsed.updated_content,
             change_summary: parsed.change_summary,
             status: "pending",
-          });
+          } as any);
 
           return NextResponse.json({
             mode: "edit",
