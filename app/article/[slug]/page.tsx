@@ -13,11 +13,10 @@ async function getArticle(slug: string) {
     .from("articles")
     .select(`*, category:categories(*)`)
     .eq("slug", slug)
-    .single();
+    .single() as any;
 
   if (!article) return null;
 
-  // Increment views
   await (supabase.rpc as any)("increment_article_views", { article_slug: slug });
 
   return article as Article;
@@ -31,7 +30,7 @@ async function getRelatedArticles(categoryId: string, currentSlug: string) {
     .eq("category_id", categoryId)
     .neq("slug", currentSlug)
     .order("published_at", { ascending: false })
-    .limit(3);
+    .limit(3) as any;
 
   return (data || []) as Article[];
 }
@@ -59,7 +58,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     ? await getRelatedArticles(article.category_id, article.slug)
     : [];
 
-  // For server-side, we assume free tier. Client-side auth will handle actual paywall
   const userTier = "free" as const;
   const hasAccess = canAccessArticle(userTier, article.paywall_tier);
   const isPaywalled = article.paywall_tier !== "free" && !hasAccess;
@@ -78,7 +76,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         />
         <div className="absolute inset-0 bg-gradient-to-t from-voyager-dark via-voyager-dark/40 to-transparent" />
 
-        <!-- Top Bar -->
+        {/* Top Bar */}
         <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
           <Link
             href="/"
@@ -91,13 +89,13 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             <button className="rounded-full bg-voyager-dark/60 backdrop-blur-sm p2.5 text-voyager-cream hover:bg-voyager-dark/80 transition-colors">
               <Bookmark className="w-4 h-4" />
             </button>
-            <button className="rounded-full bg-toyager-dark/60 backdrop-blur-sm p2.5 text-voyager-cream hover:bg-toyager-dark/80 transition-colors">
+            <button className="rounded-full bg-voyager-dark/60 backdrop-blur-sm p2.5 text-voyager-cream hover:bg-voyager-dark/80 transition-colors">
               <Share2 className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        <!-- Title Overlay -->
+        {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <span className="text-voyager-gold text-xs font-medium uppercase tracking-wider">
             {article.category?.name}
@@ -116,7 +114,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
       </div>
 
-      <!-- Article Content -->
+      {/* Article Content */}
       <div className="max-w2 xl mx-auto px-4 py-8">
         <div
           className={`article-content ${isPaywalled ? "paywall-blur max-h-[600px] overflow-hidden" : ""}`}
@@ -144,7 +142,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                 Upgrade to {article.paywall_tier}
               </Link>
               <p className="text-voyager-text-muted text-xs mt-4">
-                Starting from ₮500/month
+                Starting from ₦500/month
               </p>
             </div>
           </div>
@@ -154,7 +152,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         <div className="flex items-center gap-4 mt-10 pt-6 border-t border-voyager-border">
           <button className="flex items-center gap-2 text-voyager-text-muted hover:text-voyager-gold transition-colors">
             <Heart className="w-5 h-5" />
-            <span className="text-sm">{ article.like_count }</span>
+            <span className="text-sm">{article.like_count}</span>
           </button>
           <button className="flex items-center gap-2 text-voyager-text-muted hover:text-voyager-gold transition-colors">
             <Bookmark className="w-5 h-5" />
@@ -167,15 +165,15 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
       </div>
 
-      <!-- Related Articles -->
+      {/* Related Articles */}
       {related.length > 0 && (
         <section className="px-4 py-10 border-t border-voyager-border">
           <h2 className="font-serif text-lg text-voyager-cream mb-6">More in {article.category?.name}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {related.map((rel) => (
+            {related.map((rel: any) => (
               <Link
                 key={rel.id}
-                href={ `/article/${rel.slug}`}
+                href={`/article/${rel.slug}`}
                 className="group block"
               >
                 <div className="img-zoom relative aspect-[16/10] rounded-lg overflow-hidden mb-2">
@@ -196,7 +194,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </section>
       )}
 
-      <!-- Bottom Nav -->
+      {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-voyager-border pb-safe">
         <div className="flex items-center justify-around py-3 max-w-lg mx-auto">
           {[
@@ -218,6 +216,4 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </nav>
     </main>
   );
-        }
-
-        
+    }
