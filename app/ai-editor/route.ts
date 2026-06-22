@@ -2,9 +2,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 
+const BR = "\n";
+
 export async function POST(req: NextRequest) {
   try {
-    // ADMIN GATE
     const supabase = createServerClient();
     const authHeader = req.headers.get("authorization")?.replace("Bearer ", "");
     if (!authHeader) {
@@ -25,7 +26,6 @@ export async function POST(req: NextRequest) {
     if (!profile?.is_admin) {
       return NextResponse.json({ error: "Admin access required." }, { status: 403 });
     }
-    // END ADMIN GATE
 
     const { mode, message, articleId, articleSlug, history } = await req.json();
 
@@ -41,37 +41,14 @@ export async function POST(req: NextRequest) {
 
       if (data) {
         articleData = data;
-        articleContext = `ARTICLE CONTEXT:
-Title: ${data.title}
-Category: ${data.category?.name || 'N/A'}
-Excerpt: ${data.excerpt}
-Current Content:
-${data.content}`;
+        articleContext = "ARTICLE CONTEXT:" + BR + "Title: " + data.title + BR + "Category: " + (data.category?.name || "N/A") + BR + "Excerpt: " + data.excerpt + BR + "Current Content:" + BR + data.content;
       }
     }
 
     let systemPrompt = "";
 
     if (mode === "edit") {
-      systemPrompt = `You are the Voyager Magazine Editor-in-Chief. You have full editorial authority over the magazine's archive.
-
-${articleContext}
-
-YOUR ROLE:
-1. The user will ask you to make changes to the article above.
-2. You must generate the COMPLETE updated article content in HTML format.
-3. You must also provide a clear CHANGE_SUMMARY listing exactly what was modified.
-4. You must preserve the article's voice, tone, and journalistic quality.
-5. You may add new sections, update facts, change prices, add product cards, or restructure the narrative.
-6. Do NOT change the article slug or title unless explicitly asked.
-
-RESPONSE FORMAT (STRICT JSON):
-{
-  "change_summary": "Bullet list of changes made",
-  "updated_content": "The full HTML content of the updated article",
-  "confidence": "high|medium|low",
-  "notes": "Any editorial notes or concerns"
-}`;
+      systemPrompt = "You are the Voyager Magazine Editor-in-Chief. You have full editorial authority over the magazine's archive." + BR + BR + articleContext + BR + BR + "YOUR ROLE:" + BR + "1. The user will ask you to make changes to the article above." + BR + "2. You must generate the COMPLETE updated article content in HTML format." + BR + "3. You must also provide a clear CHANGE_SUMMARY listing exactly what was modified." + BR + "4. You must preserve the article's voice, tone, and journalistic quality." + BR + "5. You may add new sections, update facts, change prices, add product cards, or restructure the narrative." + BR + "6. Do NOT change the article slug or title unless explicitly asked." + BR + BR + "RESPONSE FORMAT (STRICT JSON):" + BR + "{" + BR + '  "change_summary": "Bullet list of changes made",' + BR + '  "updated_content": "The full HTML content of the updated article",' + BR + '  "confidence": "high|medium|low",' + BR + '  "notes": "Any editorial notes or concerns"' + BR + "}";
     } else {
       const { data: relatedArticles } = await supabase
         .from("articles")
@@ -80,18 +57,10 @@ RESPONSE FORMAT (STRICT JSON):
         .limit(3);
 
       const archiveContext = (relatedArticles || [])
-        .map((a) => `ARTICLE: ${a.title}
-${a.excerpt}
-${a.content.slice(0, 800)}`)
-        .join("
+        .map((a) => "ARTICLE: " + a.title + BR + a.excerpt + BR + a.content.slice(0, 800))
+        .join(BR + BR);
 
-");
-
-      systemPrompt = `You are the Voyager Magazine Editor. You have access to the following article archive:
-
-${archiveContext}
-
-Answer based on the archive. If the archive doesn't contain the answer, say so honestly. Be concise, elegant, and knowledgeable.`;
+      systemPrompt = "You are the Voyager Magazine Editor. You have access to the following article archive:" + BR + BR + archiveContext + BR + BR + "Answer based on the archive. If the archive doesn't contain the answer, say so honestly. Be concise, elegant, and knowledgeable.";
     }
 
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -160,5 +129,5 @@ Answer based on the archive. If the archive doesn't contain the answer, say so h
       { status: 500 }
     );
   }
-}
-  
+        }
+             
