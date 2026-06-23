@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Bookmark, Share2 } from 'lucide-react';
 
-// Hardcoded article data
 const articles: Record<string, any> = {
   'obi-cubana-legacy-of-influence': {
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
@@ -11,7 +10,7 @@ const articles: Record<string, any> = {
     author: 'Voyager Editorial',
     read_time: 10,
     issue: '01',
-    video_url: 'https://youtu.be/6p5XX-b3Ay4?si=Qwqi8pKMRH0i2X2Y',
+    video_url: 'https://www.youtube.com/embed/6p5XX-b3Ay4',
     images: [
       '/obi-cubana.jpg',
       'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
@@ -67,10 +66,7 @@ const articles: Record<string, any> = {
 
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   const article = articles[params.slug];
-  
-  if (!article) {
-    notFound();
-  }
+  if (!article) notFound();
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
@@ -92,7 +88,7 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
         </div>
       </header>
 
-      {/* Hero Image Gallery */}
+      {/* Hero Image */}
       <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
         <Image
           src={article.images[0]}
@@ -134,6 +130,18 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
 
       {/* Article Content */}
       <article className="px-5 py-6 max-w-md mx-auto space-y-6">
+        
+        {/* YOUTUBE EMBED */}
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
+          <iframe
+            src={article.video_url}
+            title="Obi Cubana Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          />
+        </div>
+
         {article.content.map((block: any, i: number) => {
           if (block.type === 'text') {
             return <p key={i} className="text-[15px] leading-relaxed text-[#F2EDE4]/90">{block.text}</p>;
@@ -162,26 +170,6 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
           return null;
         })}
       </article>
-
-      {/* Sponsored Ad */}
-      <div className="px-5 max-w-md mx-auto mt-8">
-        <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=800&auto=format&fit=crop"
-            alt="Sponsored"
-            fill
-            className="object-cover"
-            unoptimized
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4">
-            <span className="text-[9px] text-[#F2EDE4]/50 uppercase tracking-wider mb-1 block">Sponsored</span>
-            <h4 className="text-sm font-medium text-white mb-1">Private Air Charter — Abuja to Paris</h4>
-            <p className="text-[10px] text-[#F2EDE4]/60 mb-3">Skip the layovers. Gulfstream G650. Departures daily.</p>
-            <button className="w-full py-2.5 rounded-xl bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium">Reserve Seat</button>
-          </div>
-        </div>
-      </div>
 
       {/* Paywall */}
       <div className="px-5 max-w-md mx-auto mt-8 mb-8">
