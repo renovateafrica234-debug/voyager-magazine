@@ -25,18 +25,14 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(12);
 
-  // HARDCODED HERO: Obi Cubana with multiple images + YouTube video
+  // HERO: Obi Cubana — uses local file /obi-cubana.jpg
   const heroArticle = {
     id: 'obi-cubana-hero',
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
     slug: 'obi-cubana-legacy-of-influence',
     excerpt: 'In the bustling streets of Abuja and the vibrant markets of Lagos, the name Obi Cubana resonates with a particular frequency. It is not merely a name but a brand — a symbol of what happens when cultural authenticity meets entrepreneurial vision.',
-    video_url: 'https://youtu.be/6p5XX-b3Ay4?si=Qwqi8pKMRH0i2X2Y',
-    images: [
-      '/obi-cubana.jpg',
-      'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop',
-    ],
+    image_url: '/obi-cubana.jpg',
+    video_url: 'https://www.youtube.com/embed/6p5XX-b3Ay4',
     category: 'Culture',
     author: 'Voyager Editorial',
     read_time: 10,
@@ -65,54 +61,39 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* HERO with multiple images */}
+      {/* HERO */}
       <section className="px-4 pt-4 max-w-md mx-auto">
-        <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden group">
-          {/* Primary image */}
-          <Image
-            src={heroArticle.images[0]}
-            alt={heroArticle.title}
-            fill
-            className="object-cover"
-            priority
-            unoptimized
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
-          
-          {/* YouTube play button - WORKING LINK */}
-          <a 
-            href={heroArticle.video_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform z-10"
-          >
-            <Play className="w-6 h-6 text-[#0A0A0A] ml-1" fill="#0A0A0A" />
-          </a>
+        <Link href={`/article/${heroArticle.slug}`}>
+          <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden group">
+            <Image
+              src={heroArticle.image_url}
+              alt={heroArticle.title}
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
+            
+            {/* Play button overlay */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm pointer-events-none">
+              <Play className="w-6 h-6 text-[#0A0A0A] ml-1" fill="#0A0A0A" />
+            </div>
 
-          {/* Thumbnail gallery overlay at bottom */}
-          <div className="absolute bottom-24 left-4 right-4 flex gap-2 z-10">
-            {heroArticle.images.slice(1).map((img, i) => (
-              <div key={i} className="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-white/20">
-                <Image src={img} alt={`Gallery ${i + 2}`} fill className="object-cover" unoptimized />
-              </div>
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-5">
-            <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
-              {heroArticle.category}
-            </span>
-            <Link href={`/article/${heroArticle.slug}`}>
-              <h2 className="text-2xl font-semibold leading-tight mb-2 text-white hover:text-[#C9A96E] transition-colors">
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
+                {heroArticle.category}
+              </span>
+              <h2 className="text-2xl font-semibold leading-tight mb-2 text-white">
                 {heroArticle.title}
               </h2>
-            </Link>
-            <p className="text-xs text-[#F2EDE4]/60">
-              {heroArticle.author} · {heroArticle.read_time} min · Issue {heroArticle.issue}
-            </p>
+              <p className="text-xs text-[#F2EDE4]/60">
+                {heroArticle.author} · {heroArticle.read_time} min · Issue {heroArticle.issue}
+              </p>
+            </div>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* TRENDING */}
@@ -184,4 +165,5 @@ export default async function HomePage() {
 
     </div>
   );
-}
+          }
+              
