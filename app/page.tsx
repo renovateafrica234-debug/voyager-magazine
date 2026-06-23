@@ -2,30 +2,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@supabase/supabase-js';
 import { 
+  Home, 
   Compass, 
-  Plane, 
-  Briefcase, 
-  UtensilsCrossed, 
-  TrendingUp, 
-  MessageCircle, 
   Bookmark, 
   User, 
   ChevronRight,
-  Clock
+  Clock,
+  Layers,
+  MessageCircle
 } from 'lucide-react';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
-const categoryIcons: Record<string, React.ReactNode> = {
-  culture: <Compass className="w-5 h-5" />,
-  travel: <Plane className="w-5 h-5" />,
-  business: <Briefcase className="w-5 h-5" />,
-  food: <UtensilsCrossed className="w-5 h-5" />,
-  lifestyle: <TrendingUp className="w-5 h-5" />,
-};
 
 export default async function HomePage() {
   const { data: categories } = await supabase
@@ -40,196 +30,218 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(12);
 
-  let { data: heroArticle } = await supabase
-    .from('articles')
-    .select('*, categories(name, slug)')
-    .eq('featured', true)
-    .maybeSingle();
+  // HARDCODED HERO: Obi Cubana — matches your v18 demo exactly
+  const heroArticle = {
+    id: 'obi-cubana-hero',
+    title: 'Obi Cubana: A Legacy of Influence',
+    slug: 'obi-cubana-legacy-of-influence',
+    excerpt: 'In the bustling streets of Abuja and the vibrant markets of Lagos, the name Obi Cubana resonates with a particular frequency. It is not merely a name but a brand — a symbol of what happens when cultural authenticity meets entrepreneurial vision.',
+    image_url: '/obi-cubana.jpg',
+    cover_image: '/obi-cubana.jpg',
+    category: 'Culture',
+    category_slug: 'culture',
+    author: 'Voyager Editorial',
+    read_time: 10,
+  };
 
-  // HARDCODED FALLBACK: Obi Cubana hero with real Facebook image
-  if (!heroArticle) {
-    heroArticle = {
-      id: 'obi-cubana-hero',
-      title: 'The King of Abuja Nights',
-      slug: 'obi-cubana-abuja-nights',
-      excerpt: 'Inside the empire of Nigeria\'s most celebrated nightlife entrepreneur and his vision for luxury hospitality across Africa.',
-      content: '',
-      image_url: 'https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/365699413_773596821232007_8128357802223160569_n.jpg?stp=dst-jpg_tt6&cstp=mx960x960&ctp=s480x480&_nc_cat=1&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=epj4KBXnrwIQ7kNvwGhGRaZ&_nc_oc=AdqkpjjXtSHtmfwIwVSiqRdDYld0l1WEbkSSnoLDflzCJEIEX6lkO_k-axblk2DWXl8&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=Q9FT-2iJ5TrENgSw16PJ5Q&_nc_ss=7b2a8&oh=00_Af8nh58bOaR2ozYdGG4NgLdRaH2zprCv3jsXhoR7b0Y8AA&oe=6A3F5DE3',
-      cover_image: 'https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-1/365699413_773596821232007_8128357802223160569_n.jpg?stp=dst-jpg_tt6&cstp=mx960x960&ctp=s480x480&_nc_cat=1&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=epj4KBXnrwIQ7kNvwGhGRaZ&_nc_oc=AdqkpjjXtSHtmfwIwVSiqRdDYld0l1WEbkSSnoLDflzCJEIEX6lkO_k-axblk2DWXl8&_nc_zt=24&_nc_ht=scontent-los4-1.xx&_nc_gid=Q9FT-2iJ5TrENgSw16PJ5Q&_nc_ss=7b2a8&oh=00_Af8nh58bOaR2ozYdGG4NgLdRaH2zprCv3jsXhoR7b0Y8AA&oe=6A3F5DE3',
-      category_id: null,
-      categories: { name: 'Culture', slug: 'culture' },
-      featured: true,
-      published: true,
-      read_time: 8,
-      created_at: new Date().toISOString(),
-    } as any;
-  }
+  // Fallback trending articles (from your v18 demo)
+  const trendingArticles = [
+    { 
+      title: 'Glimmers of Ice and Tomorrow in West Greenland', 
+      slug: 'west-greenland', 
+      category: 'Travel', 
+      author: 'Amara Okafor',
+      read_time: 8, 
+      img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=600&auto=format&fit=crop' 
+    },
+    { 
+      title: 'Monaco: Where the Mediterranean Meets Majesty', 
+      slug: 'monaco-mediterranean', 
+      category: 'Travel', 
+      author: 'Amara Okafor',
+      read_time: 8, 
+      img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop' 
+    },
+  ];
 
-  const heroImage = heroArticle.image_url || heroArticle.cover_image;
+  const latestArticles = articles?.length ? articles : [
+    { title: 'The Weavers of Kano: A Century of Silk and Story', slug: 'weavers-of-kano', category: 'Culture', author: 'Ibrahim Suleiman', read_time: 12, img: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=400&auto=format&fit=crop' },
+    { title: 'Glimmers of Ice and Tomorrow in West Greenland', slug: 'west-greenland', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400&auto=format&fit=crop' },
+    { title: 'Monaco: Where the Mediterranean Meets Majesty', slug: 'monaco', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=400&auto=format&fit=crop' },
+  ];
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
       
-      {/* HERO */}
-      <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
-        <Image
-          src={heroImage}
-          alt={heroArticle.title}
-          fill
-          className="object-cover"
-          priority
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 right-0 p-6 pb-10">
-          <div className="max-w-4xl mx-auto">
-            <Link 
-              href={`/category/${heroArticle.categories?.slug || 'culture'}`}
-              className="inline-flex items-center gap-2 text-[#C9A96E] text-xs font-medium tracking-widest uppercase mb-3"
-            >
-              {categoryIcons[heroArticle.categories?.slug || 'culture']}
-              {heroArticle.categories?.name || 'Culture'}
-            </Link>
-            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-3 text-white">
-              {heroArticle.title}
-            </h1>
-            <p className="text-[#F2EDE4]/70 text-sm md:text-base leading-relaxed max-w-xl mb-4">
-              {heroArticle.excerpt}
-            </p>
-            <div className="flex items-center gap-4 text-xs text-[#F2EDE4]/50">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {heroArticle.read_time} min read
+      {/* ===== VOYAGER HEADER ===== */}
+      <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-center relative">
+          <h1 className="text-xl font-light tracking-[0.3em] text-[#C9A96E] uppercase font-serif">
+            Voyager
+          </h1>
+          <button className="absolute right-4 w-8 h-8 rounded-full border border-[#C9A96E]/30 flex items-center justify-center text-[#C9A96E]">
+            <span className="text-sm">☀</span>
+          </button>
+        </div>
+      </header>
+
+      {/* ===== HERO CARD ===== */}
+      <section className="px-4 pt-4 max-w-md mx-auto">
+        <Link href={`/article/${heroArticle.slug}`}>
+          <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden group">
+            <Image
+              src={heroArticle.image_url}
+              alt={heroArticle.title}
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
+            
+            {/* Play button */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm">
+              <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-[#0A0A0A] border-b-[6px] border-b-transparent ml-1" />
+            </div>
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
+                {heroArticle.category}
               </span>
-              <span>Featured</span>
+              <h2 className="text-2xl font-semibold leading-tight mb-2 text-white">
+                {heroArticle.title}
+              </h2>
+              <p className="text-xs text-[#F2EDE4]/60">
+                {heroArticle.author} · {heroArticle.read_time} min
+              </p>
             </div>
           </div>
-        </div>
+        </Link>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="px-6 py-8 max-w-4xl mx-auto">
-        <h2 className="text-xs font-medium tracking-widest uppercase text-[#C9A96E] mb-4">
-          Explore
-        </h2>
+      {/* ===== TRENDING NOW ===== */}
+      <section className="px-4 mt-8 max-w-md mx-auto">
+        <h3 className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#F2EDE4]/40 mb-4">
+          Trending Now
+        </h3>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          {categories?.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/category/${cat.slug}`}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 border border-white/10 text-sm text-[#F2EDE4] hover:border-[#C9A96E]/50 hover:bg-[#C9A96E]/10 transition-all shrink-0"
-            >
-              {categoryIcons[cat.slug] || <Compass className="w-4 h-4" />}
-              {cat.name}
+          {trendingArticles.map((article, i) => (
+            <Link key={i} href={`/article/${article.slug}`} className="shrink-0 w-40">
+              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-2">
+                <Image
+                  src={article.img}
+                  alt={article.title}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3">
+                  <span className="text-[9px] text-[#C9A96E] uppercase tracking-wider">{article.category}</span>
+                </div>
+              </div>
+              <h4 className="text-xs font-medium text-[#F2EDE4] leading-snug line-clamp-2">
+                {article.title}
+              </h4>
+              <p className="text-[10px] text-[#F2EDE4]/40 mt-1">{article.read_time} min read</p>
             </Link>
           ))}
-          {!categories?.length && (
-            <>
-              {['Culture', 'Travel', 'Business', 'Food'].map((name) => (
-                <Link
-                  key={name}
-                  href={`/category/${name.toLowerCase()}`}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 border border-white/10 text-sm text-[#F2EDE4] hover:border-[#C9A96E]/50 transition-all shrink-0"
-                >
-                  <Compass className="w-4 h-4" />
-                  {name}
-                </Link>
-              ))}
-            </>
-          )}
         </div>
       </section>
 
-      {/* ARTICLES */}
-      <section className="px-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xs font-medium tracking-widest uppercase text-[#C9A96E]">
+      {/* ===== LATEST STORIES ===== */}
+      <section className="px-4 mt-8 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#F2EDE4]/40">
             Latest Stories
-          </h2>
-          <Link href="/articles" className="text-xs text-[#F2EDE4]/50 hover:text-[#C9A96E] flex items-center gap-1">
+          </h3>
+          <Link href="/articles" className="text-[10px] text-[#C9A96E] flex items-center gap-1">
             View all <ChevronRight className="w-3 h-3" />
           </Link>
         </div>
 
-        <div className="grid gap-6">
-          {articles?.map((article) => (
-            <Link key={article.id} href={`/article/${article.slug}`}>
-              <article className="group flex gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C9A96E]/30 transition-all">
-                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden shrink-0">
+        <div className="space-y-3">
+          {latestArticles.slice(0, 4).map((article: any, i: number) => (
+            <Link key={i} href={`/article/${article.slug}`}>
+              <article className="flex gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C9A96E]/20 transition-all">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0">
                   <Image
-                    src={article.image_url || article.cover_image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=400&auto=format&fit=crop'}
+                    src={article.img || article.image_url || article.cover_image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=400&auto=format&fit=crop'}
                     alt={article.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover"
                     unoptimized
                   />
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                  <span className="text-[#C9A96E] text-[10px] font-medium tracking-widest uppercase mb-1">
-                    {article.categories?.name || 'Voyager'}
+                  <span className="text-[9px] text-[#C9A96E] uppercase tracking-wider mb-1">
+                    {article.category || article.categories?.name}
                   </span>
-                  <h3 className="text-sm md:text-base font-semibold text-[#F2EDE4] leading-snug mb-2 line-clamp-2 group-hover:text-[#C9A96E] transition-colors">
+                  <h4 className="text-sm font-medium text-[#F2EDE4] leading-snug line-clamp-2">
                     {article.title}
-                  </h3>
-                  <p className="text-xs text-[#F2EDE4]/50 line-clamp-2 mb-2 hidden md:block">
-                    {article.excerpt}
-                  </p>
-                  <div className="flex items-center gap-3 text-[10px] text-[#F2EDE4]/40">
+                  </h4>
+                  <p className="text-[10px] text-[#F2EDE4]/40 mt-1 flex items-center gap-2">
+                    <span>{article.author || article.categories?.name || 'Voyager'}</span>
+                    <span>·</span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {article.read_time} min
                     </span>
-                    <span>{new Date(article.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                  </div>
+                  </p>
                 </div>
               </article>
             </Link>
           ))}
-
-          {!articles?.length && (
-            <>
-              {[
-                { title: 'Kano: Where Ancient Walls Meet Modern Hustle', slug: 'kano-ancient-walls', cat: 'Travel', read: 6, img: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=400&auto=format&fit=crop' },
-                { title: 'Lagos After Dark: The New Wave of Underground Dining', slug: 'lagos-underground-dining', cat: 'Food', read: 5, img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=400&auto=format&fit=crop' },
-                { title: 'The Rise of Abuja Tech: Silicon Savannah North', slug: 'abuja-tech-rise', cat: 'Business', read: 7, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=400&auto=format&fit=crop' },
-              ].map((a, i) => (
-                <Link key={i} href={`/article/${a.slug}`}>
-                  <article className="group flex gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C9A96E]/30 transition-all">
-                    <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden shrink-0">
-                      <Image src={a.img} alt={a.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
-                    </div>
-                    <div className="flex flex-col justify-center min-w-0">
-                      <span className="text-[#C9A96E] text-[10px] font-medium tracking-widest uppercase mb-1">{a.cat}</span>
-                      <h3 className="text-sm md:text-base font-semibold text-[#F2EDE4] leading-snug mb-2 line-clamp-2 group-hover:text-[#C9A96E] transition-colors">{a.title}</h3>
-                      <div className="flex items-center gap-3 text-[10px] text-[#F2EDE4]/40">
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{a.read} min</span>
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              ))}
-            </>
-          )}
         </div>
       </section>
 
-      {/* BOTTOM NAV */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A]/90 backdrop-blur-xl border-t border-[#C9A96E]/10">
-        <div className="max-w-md mx-auto flex items-center justify-around px-4 py-2">
+      {/* ===== SPONSORED AD PLACEHOLDER ===== */}
+      <section className="px-4 mt-8 max-w-md mx-auto">
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=800&auto=format&fit=crop"
+            alt="Sponsored"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <span className="text-[9px] text-[#F2EDE4]/50 uppercase tracking-wider mb-1 block">Sponsored</span>
+            <h4 className="text-sm font-medium text-white mb-1">WhiteLion Voyage — Morocco Luxury Escape</h4>
+            <p className="text-[10px] text-[#F2EDE4]/60 mb-3">7 nights in a private riad with chef & butler. Marrakech + Sahara.</p>
+            <button className="w-full py-2.5 rounded-xl bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium">
+              Book Now
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== BOTTOM NAV ===== */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-xl border-t border-white/5">
+        <div className="max-w-md mx-auto flex items-center justify-around px-2 py-2">
           <Link href="/" className="flex flex-col items-center gap-1 p-2 text-[#C9A96E]">
-            <Compass className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Discover</span>
-          </Link>
-          <Link href="/bookmarks" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
-            <Bookmark className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Saved</span>
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Home</span>
           </Link>
           
-          <Link href="/chat" className="relative -top-5">
+          <Link href="/explore" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
+            <Compass className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Explore</span>
+          </Link>
+          
+          {/* Center Elevated FAB */}
+          <Link href="/chat" className="relative -top-4">
             <div className="w-14 h-14 rounded-full bg-[#C9A96E] flex items-center justify-center shadow-lg shadow-[#C9A96E]/20 hover:scale-105 transition-transform">
               <MessageCircle className="w-6 h-6 text-[#0A0A0A]" />
             </div>
+          </Link>
+
+          <Link href="/saved" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
+            <Bookmark className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Saved</span>
           </Link>
 
           <Link href="/profile" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
@@ -241,5 +253,5 @@ export default async function HomePage() {
 
     </div>
   );
-      }
-                
+            }
+                  
