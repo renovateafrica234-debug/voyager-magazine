@@ -197,5 +197,5 @@ export default function ArtSalesPage() {
       </div>
     </div>
   );
-    }
+  }
   
