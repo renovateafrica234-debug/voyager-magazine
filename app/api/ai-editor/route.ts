@@ -49,4 +49,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Editor service error. Please try again.' }, { status: 500 });
   }
 }
-
