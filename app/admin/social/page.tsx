@@ -13,6 +13,14 @@ import {
 
 const shareTemplates = [
   {
+<button
+  onClick={() => {
+    const url = template.getUrl(articleUrl || baseUrl, articleTitle);
+    window.open(url, '_blank', 'width=600,height=400');
+  }}
+  className="..."
+>
+  
     platform: 'Twitter / X',
     icon: Twitter,
     color: 'text-sky-400',
@@ -133,6 +141,13 @@ export default function SocialHub() {
       </div>
 
       {/* WhatsApp */}
+      <button
+  onClick={() => {
+    const text = encodeURIComponent(`${articleTitle} — ${articleUrl || baseUrl}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  }}
+>
+        
       <a
         href={`https://wa.me/?text=${encodeURIComponent(generatedCopy || 'Check out Voyager Magazine')}`}
         target="_blank"
