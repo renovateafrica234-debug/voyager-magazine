@@ -5,13 +5,18 @@ import { createClient } from '@supabase/supabase-js';
 import { 
   ArrowLeft, 
   Bookmark, 
-  Share2 
+  Share2,
+  Play,
+  ChevronRight
 } from 'lucide-react';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+
+// Fallback image for broken loads
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=800&auto=format&fit=crop';
 
 // Hardcoded fallback articles for demo slugs
 const fallbackArticles: Record<string, any> = {
@@ -23,7 +28,6 @@ const fallbackArticles: Record<string, any> = {
     issue: '01',
     video_url: 'https://www.youtube.com/embed/6p5XX-b3Ay4',
     images: [
-      '/obi-cubana.jpg',
       'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop',
     ],
@@ -48,9 +52,9 @@ const fallbackArticles: Record<string, any> = {
     issue: '02',
     images: ['https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=800&auto=format&fit=crop'],
     content: [
-      { type: 'text', text: 'In the ancient city of Kano, where mud walls have stood for centuries, a different kind of architecture persists — one woven from silk, cotton, and the patience of generations.' },
-      { type: 'heading', text: 'Threads of History' },
-      { type: 'text', text: 'The Kano textile tradition dates back to the trans-Saharan trade routes. Today, master weavers continue to produce fabrics that command premium prices from Marrakech to Milan.' },
+      { type: 'text', text: 'In the ancient city of Kano, the loom is not merely a tool — it is a time machine. Every thread carries the weight of centuries, every pattern a story passed from father to son.' },
+      { type: 'heading', text: 'The Silk Road of West Africa' },
+      { type: 'text', text: 'Long before European traders arrived, Kano was the terminus of trans-Saharan trade routes. Silk, gold, and ideas flowed through its gates, and the weavers were the keepers of its visual language.' },
     ]
   },
   'west-greenland': {
@@ -61,7 +65,7 @@ const fallbackArticles: Record<string, any> = {
     issue: '03',
     images: ['https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop'],
     content: [
-      { type: 'text', text: 'There is a silence in Greenland that no city dweller can imagine. It is not the absence of sound, but the presence of something older — ice that has witnessed millennia.' },
+      { type: 'text', text: 'West Greenland is experiencing a renaissance of luxury eco-tourism. Private lodges, helicopter skiing, and Arctic cruises are drawing a new class of explorer.' },
       { type: 'heading', text: 'The Last Frontier' },
       { type: 'text', text: 'West Greenland is experiencing a renaissance of luxury eco-tourism. Private lodges, helicopter skiing, and Arctic cruises are drawing a new class of explorer.' },
     ]
@@ -138,6 +142,30 @@ const fallbackArticles: Record<string, any> = {
       { type: 'heading', text: 'Desert Luxury' },
       { type: 'text', text: 'From Morocco\'s Erg Chebbi to Niger\'s Ténéré, luxury camps now offer experiences that rival the finest safari lodges.' },
     ]
+  },
+  'the-rise-of-abuja-tech': {
+    title: 'The Rise of Abuja Tech',
+    category: 'Business',
+    author: 'Voyager Editorial',
+    read_time: 8,
+    images: ['https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop'],
+    content: [
+      { type: 'text', text: 'Abuja is quietly becoming Nigeria\'s most sophisticated tech hub. While Lagos grabs headlines, the capital builds infrastructure.' },
+      { type: 'heading', text: 'The Policy Advantage' },
+      { type: 'text', text: 'Proximity to regulators and government contracts has created a unique ecosystem of enterprise SaaS, fintech, and govtech startups.' },
+    ]
+  },
+  'african-art-renaissance': {
+    title: 'African Art Renaissance: The New Collectors',
+    category: 'Art',
+    author: 'Voyager Editorial',
+    read_time: 10,
+    images: ['https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=800&auto=format&fit=crop'],
+    content: [
+      { type: 'text', text: 'A new generation of African collectors is reshaping the global art market. They are not buying for status — they are buying for legacy.' },
+      { type: 'heading', text: 'The Lagos-Abuja Axis' },
+      { type: 'text', text: 'Between Lagos\'s commercial galleries and Abuja\'s diplomatic collectors, a vibrant market for contemporary African art is emerging.' },
+    ]
   }
 };
 
@@ -157,14 +185,28 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     notFound();
   }
 
-  const images = article.images || [article.image_url || article.cover_image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=800'];
+  const images = article.images || [article.image_url || article.cover_image || FALLBACK_IMG];
   const content = article.content || [
     { type: 'text', text: article.excerpt || article.content || 'Full article content coming soon.' }
   ];
 
+  // Fetch related articles
+  const { data: related } = await supabase
+    .from('articles')
+    .select('slug, title, cover_image, category:categories(name)')
+    .eq('status', 'published')
+    .neq('slug', params.slug)
+    .limit(3);
+
+  const relatedArticles = related?.length ? related : [
+    { slug: 'west-greenland', title: 'Glimmers of Ice and Tomorrow in West Greenland', cover_image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400', category: { name: 'Travel' } },
+    { slug: 'african-art-renaissance', title: 'African Art Renaissance: The New Collectors', cover_image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=400', category: { name: 'Art' } },
+    { slug: 'the-rise-of-abuja-tech', title: 'The Rise of Abuja Tech', cover_image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=400', category: { name: 'Business' } },
+  ];
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
-      
+
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
@@ -175,14 +217,23 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors">
               <Bookmark className="w-4 h-4 text-[#F2EDE4]" />
             </button>
-            <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors">
+            <button 
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title: article.title, url: window.location.href });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                }
+              }}
+              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors"
+            >
               <Share2 className="w-4 h-4 text-[#F2EDE4]" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Hero Image */}
+      {/* Hero Image — NO THUMBNAIL STRIP */}
       <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
         <Image
           src={images[0]}
@@ -191,20 +242,24 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           className="object-cover"
           priority
           unoptimized
+          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-        
+
+        {/* Image counter only */}
         <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs text-white">
           1 / {images.length}
         </div>
 
-        <div className="absolute bottom-20 left-4 right-4 flex gap-2 overflow-x-auto scrollbar-hide">
-          {images.map((img: string, i: number) => (
-            <div key={i} className={`relative w-14 h-14 rounded-lg overflow-hidden border-2 shrink-0 ${i === 0 ? 'border-[#C9A96E]' : 'border-white/20'}`}>
-              <Image src={img} alt={`Image ${i + 1}`} fill className="object-cover" unoptimized />
-            </div>
-          ))}
-        </div>
+        {/* Play button — scrolls to video */}
+        {article.video_url && (
+          <a 
+            href="#video-embed" 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform"
+          >
+            <Play className="w-6 h-6 text-[#0A0A0A] fill-[#0A0A0A] ml-1" />
+          </a>
+        )}
 
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
@@ -221,10 +276,10 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
       {/* Article Content */}
       <article className="px-5 py-6 max-w-md mx-auto space-y-6">
-        
+
         {/* YOUTUBE EMBED */}
         {article.video_url && (
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
+          <div id="video-embed" className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
             <iframe
               src={article.video_url}
               title="Article Video"
@@ -254,7 +309,14 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             return (
               <figure key={i} className="my-6">
                 <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
-                  <Image src={block.src} alt={block.caption || ''} fill className="object-cover" unoptimized />
+                  <Image 
+                    src={block.src} 
+                    alt={block.caption || ''} 
+                    fill 
+                    className="object-cover" 
+                    unoptimized 
+                    onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
+                  />
                 </div>
                 <figcaption className="text-[10px] text-[#F2EDE4]/40 mt-2 text-center">{block.caption}</figcaption>
               </figure>
@@ -265,52 +327,45 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </article>
 
       {/* Sponsored Ad */}
-      <div className="px-5 max-w-md mx-auto mt-8">
-        <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=800&auto=format&fit=crop"
-            alt="Sponsored"
-            fill
-            className="object-cover"
-            unoptimized
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4">
-            <span className="text-[9px] text-[#F2EDE4]/50 uppercase tracking-wider mb-1 block">Sponsored</span>
-            <h4 className="text-sm font-medium text-white mb-1">Private Air Charter — Abuja to Paris</h4>
-            <p className="text-[10px] text-[#F2EDE4]/60 mb-3">Skip the layovers. Gulfstream G650. Departures daily.</p>
-            <button className="w-full py-2.5 rounded-xl bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium">Reserve Seat</button>
-          </div>
+      <div className="px-5 max-w-md mx-auto mb-8">
+        <div className="rounded-2xl bg-gradient-to-r from-[#C9A96E]/10 to-transparent border border-[#C9A96E]/20 p-5">
+          <p className="text-[10px] text-[#C9A96E] uppercase tracking-wider mb-2">Sponsored</p>
+          <h3 className="text-sm font-medium text-[#F2EDE4] mb-1">Experience Abuja Like Never Before</h3>
+          <p className="text-xs text-[#F2EDE4]/50 mb-3">Exclusive luxury stays and private tours curated by Voyager.</p>
+          <button className="px-4 py-2 rounded-full bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium">Learn More</button>
         </div>
       </div>
 
-      {/* Paywall */}
-      <div className="px-5 max-w-md mx-auto mt-8 mb-8">
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-center">
-          <div className="w-12 h-0.5 bg-[#C9A96E]/30 mx-auto mb-4 rounded-full" />
-          <h3 className="text-lg font-semibold text-white mb-1">Continue Reading</h3>
-          <p className="text-xs text-[#F2EDE4]/50 mb-4">Subscribe to unlock the full story and our AI concierge.</p>
-          <div className="space-y-2 mb-4">
-            {[
-              { name: 'Starter', desc: '3 articles/week', price: '$5/mo' },
-              { name: 'Premium', desc: 'Unlimited + AI', price: '$12/mo' },
-              { name: 'Founder', desc: 'All access + events', price: '$15/mo' },
-            ].map((plan) => (
-              <div key={plan.name} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
-                <div className="text-left">
-                  <p className="text-sm font-medium text-white">{plan.name}</p>
-                  <p className="text-[10px] text-[#F2EDE4]/40">{plan.desc}</p>
-                </div>
-                <span className="text-sm font-semibold text-[#C9A96E]">{plan.price}</span>
+      {/* Related Articles */}
+      <section className="px-5 max-w-md mx-auto pb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-medium text-[#F2EDE4]">Read Next</h3>
+          <Link href="/explore" className="text-xs text-[#C9A96E] flex items-center gap-1">
+            Explore <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="space-y-4">
+          {relatedArticles.map((rel: any, i: number) => (
+            <Link key={i} href={`/article/${rel.slug}`} className="flex gap-3 group">
+              <div className="relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                <Image 
+                  src={rel.cover_image || FALLBACK_IMG} 
+                  alt={rel.title} 
+                  fill 
+                  className="object-cover group-hover:scale-105 transition-transform" 
+                  unoptimized
+                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
+                />
               </div>
-            ))}
-          </div>
-          <button className="w-full py-3 rounded-xl bg-[#C9A96E] text-[#0A0A0A] text-sm font-medium mb-2">Subscribe Now</button>
-          <button className="text-xs text-[#F2EDE4]/40">Maybe later</button>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-[#C9A96E] uppercase tracking-wider">{rel.category?.name || 'Voyager'}</p>
+                <h4 className="text-sm text-[#F2EDE4] leading-snug group-hover:text-[#C9A96E] transition-colors line-clamp-2">{rel.title}</h4>
+              </div>
+            </Link>
+          ))}
         </div>
-      </div>
-
+      </section>
     </div>
   );
     }
-      
+       
