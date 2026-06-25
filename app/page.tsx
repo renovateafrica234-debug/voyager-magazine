@@ -21,11 +21,11 @@ export default async function HomePage() {
   const { data: articles } = await supabase
     .from('articles')
     .select('*, categories(name, slug)')
-    .eq('published', true)
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(12);
 
-  // HERO: Obi Cubana — uses local file /obi-cubana.jpg
+  // HERO: Obi Cubana
   const heroArticle = {
     id: 'obi-cubana-hero',
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
@@ -75,12 +75,10 @@ export default async function HomePage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
             
-            {/* Play button overlay */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm pointer-events-none">
               <Play className="w-6 h-6 text-[#0A0A0A] ml-1" fill="#0A0A0A" />
             </div>
 
-            {/* Content */}
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
                 {heroArticle.category}
@@ -165,5 +163,5 @@ export default async function HomePage() {
 
     </div>
   );
-          }
-              
+      }
+      
