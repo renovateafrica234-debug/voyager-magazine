@@ -2,17 +2,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, ShoppingBag, Heart, Share2 } from 'lucide-react';
 
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=800&auto=format&fit=crop';
+
 const artPieces = [
   {
     id: 'art-001',
-    title: 'The Weaver\'s Dream',
+    title: 'The Weaver's Dream',
     artist: 'Amaka Okafor',
     price: 2500,
     currency: 'USD',
     category: 'Contemporary',
     medium: 'Oil on Canvas',
     dimensions: '120 x 90 cm',
-    image: 'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=800&auto=format&fit=crop',
     status: 'Available',
   },
   {
@@ -60,19 +62,19 @@ const artPieces = [
     category: 'Contemporary',
     medium: 'Oil & Resin',
     dimensions: '180 x 120 cm',
-    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=800&auto=format&fit=crop',
     status: 'Available',
   },
   {
     id: 'art-006',
-    title: 'The Drummer\'s Soul',
+    title: 'The Drummer's Soul',
     artist: 'Ngozi Adeyemi',
     price: 2100,
     currency: 'USD',
     category: 'Sculpture',
     medium: 'Bronze',
     dimensions: '45 x 30 x 30 cm',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800&auto=format&fit=crop',
     status: 'Sold',
   },
 ];
@@ -80,7 +82,7 @@ const artPieces = [
 export default function ArtSalesPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
-      
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
@@ -116,24 +118,25 @@ export default function ArtSalesPage() {
       </div>
 
       {/* Art Grid */}
-      <section className="px-4 pt-6 max-w-md mx-auto">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="px-4 pt-6 max-w-md mx-auto">
+        <div className="grid grid-cols-2 gap-4">
           {artPieces.map((art) => (
-            <div key={art.id} className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/5 hover:border-[#C9A96E]/30 transition-all">
+            <div key={art.id} className="group relative rounded-2xl overflow-hidden bg-white/5 border border-white/5">
+
               {/* Image */}
               <div className="relative aspect-[3/4] overflow-hidden">
                 <Image
                   src={art.image}
                   alt={art.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                   unoptimized
+                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent opacity-60" />
-                
+
                 {/* Status Badge */}
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2 py-1 rounded-full text-[9px] font-medium tracking-wider uppercase ${
+                  <span className={`px-2 py-1 rounded-full text-[10px] font-medium uppercase tracking-wider ${
                     art.status === 'Available' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
                     art.status === 'Reserved' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
                     'bg-red-500/20 text-red-400 border border-red-500/30'
@@ -144,58 +147,55 @@ export default function ArtSalesPage() {
 
                 {/* Action Buttons */}
                 <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-[#C9A96E] transition-colors">
-                    <Heart className="w-3 h-3 text-white" />
+                  <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-[#C9A96E] transition-colors">
+                    <Heart className="w-4 h-4 text-white" />
                   </button>
-                  <button className="w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-[#C9A96E] transition-colors">
-                    <Share2 className="w-3 h-3 text-white" />
+                  <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-[#C9A96E] transition-colors">
+                    <Share2 className="w-4 h-4 text-white" />
                   </button>
                 </div>
 
                 {/* Price Overlay */}
-                <div className="absolute bottom-3 left-3 right-3">
-                  <p className="text-lg font-semibold text-[#C9A96E]">${art.price.toLocaleString()}</p>
-                  <p className="text-[10px] text-[#F2EDE4]/50">{art.currency}</p>
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-[#0A0A0A] to-transparent">
+                  <p className="text-[#C9A96E] font-semibold text-sm">${art.price.toLocaleString()}</p>
+                  <p className="text-[#F2EDE4]/40 text-[10px]">{art.currency}</p>
                 </div>
               </div>
 
               {/* Info */}
               <div className="p-3">
-                <h3 className="text-sm font-medium text-[#F2EDE4] leading-snug mb-1 group-hover:text-[#C9A96E] transition-colors">
-                  {art.title}
-                </h3>
-                <p className="text-[11px] text-[#F2EDE4]/50 mb-2">{art.artist}</p>
+                <h3 className="text-sm font-medium text-[#F2EDE4] mb-1">{art.title}</h3>
+                <p className="text-xs text-[#F2EDE4]/50 mb-2">{art.artist}</p>
                 <div className="flex items-center justify-between text-[10px] text-[#F2EDE4]/30">
                   <span>{art.medium}</span>
                   <span>{art.dimensions}</span>
                 </div>
-                
-                {/* CTA */}
-                <button className={`w-full mt-3 py-2.5 rounded-xl text-xs font-medium tracking-wider uppercase transition-all ${
-                  art.status === 'Available'
-                    ? 'bg-[#C9A96E] text-[#0A0A0A] hover:bg-[#b8985e]'
-                    : 'bg-white/5 text-[#F2EDE4]/30 cursor-not-allowed'
+              </div>
+
+              {/* CTA */}
+              <div className="px-3 pb-3">
+                <button className={`w-full py-2.5 rounded-full text-xs font-medium tracking-wider uppercase transition-colors ${
+                  art.status === 'Sold' 
+                    ? 'bg-white/5 text-[#F2EDE4]/20 cursor-not-allowed' 
+                    : 'bg-[#C9A96E] text-[#0A0A0A] hover:bg-[#C9A96E]/90'
                 }`}>
-                  {art.status === 'Available' ? 'Inquire to Purchase' : art.status === 'Reserved' ? 'On Hold' : 'Sold'}
+                  {art.status === 'Sold' ? 'Sold' : 'Inquire to Purchase'}
                 </button>
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
       {/* Private Viewing */}
-      <section className="px-4 mt-10 max-w-md mx-auto">
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-[#C9A96E]/10 to-transparent border border-[#C9A96E]/20 text-center">
-          <h3 className="text-sm font-medium text-[#C9A96E] mb-2">Private Viewing</h3>
+      <div className="px-4 pt-8 max-w-md mx-auto">
+        <div className="rounded-2xl bg-gradient-to-r from-[#C9A96E]/10 to-transparent border border-[#C9A96E]/20 p-5">
+          <h3 className="text-sm font-medium text-[#F2EDE4] mb-2">Private Viewing</h3>
           <p className="text-xs text-[#F2EDE4]/50 mb-4">Interested in a piece? Schedule a private viewing at our Abuja gallery or arrange international shipping.</p>
-          <button className="w-full py-3 rounded-xl bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium tracking-wider uppercase">
-            Contact Curator
-          </button>
+          <button className="px-4 py-2 rounded-full bg-[#C9A96E] text-[#0A0A0A] text-xs font-medium">Request Appointment</button>
         </div>
-      </section>
-
+      </div>
     </div>
   );
-              }
-              
+    }
+  
