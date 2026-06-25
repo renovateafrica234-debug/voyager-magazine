@@ -17,6 +17,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=800&auto=format&fit=crop';
+
 export default async function HomePage() {
   const { data: articles } = await supabase
     .from('articles')
@@ -31,7 +33,7 @@ export default async function HomePage() {
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
     slug: 'obi-cubana-legacy-of-influence',
     excerpt: 'In the bustling streets of Abuja and the vibrant markets of Lagos, the name Obi Cubana resonates with a particular frequency. It is not merely a name but a brand — a symbol of what happens when cultural authenticity meets entrepreneurial vision.',
-    image_url: '/obi-cubana.jpg',
+    image_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
     video_url: 'https://www.youtube.com/embed/6p5XX-b3Ay4',
     category: 'Culture',
     author: 'Voyager Editorial',
@@ -39,9 +41,14 @@ export default async function HomePage() {
     issue: '01',
   };
 
+  // TRENDING: 6 diverse articles, horizontal scroll
   const trendingArticles = [
     { title: 'Glimmers of Ice and Tomorrow in West Greenland', slug: 'west-greenland', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=600&auto=format&fit=crop' },
-    { title: 'Monaco: Where the Mediterranean Meets Majesty', slug: 'monaco-mediterranean', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop' },
+    { title: 'Monaco: Where the Mediterranean Meets Majesty', slug: 'monaco', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop' },
+    { title: 'African Art Renaissance: The New Collectors', slug: 'african-art-renaissance', category: 'Art', author: 'Voyager Editorial', read_time: 10, img: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=600&auto=format&fit=crop' },
+    { title: 'The Rise of Abuja Tech', slug: 'the-rise-of-abuja-tech', category: 'Business', author: 'Voyager Editorial', read_time: 8, img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=600&auto=format&fit=crop' },
+    { title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', category: 'Fashion', author: 'Voyager Editorial', read_time: 6, img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop' },
+    { title: 'Makoko Floating School: The Architecture of Necessity', slug: 'makoko-floating-school-the-architecture-of-necessity', category: 'Architecture', author: 'Voyager Editorial', read_time: 11, img: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=600&auto=format&fit=crop' },
   ];
 
   const latestArticles = articles?.length ? articles : [
@@ -52,7 +59,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
-      
+
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-center relative">
@@ -72,18 +79,21 @@ export default async function HomePage() {
               className="object-cover"
               priority
               unoptimized
+              onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
-            
+
+            {/* Play button */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm pointer-events-none">
-              <Play className="w-6 h-6 text-[#0A0A0A] ml-1" fill="#0A0A0A" />
+              <Play className="w-6 h-6 text-[#0A0A0A] fill-[#0A0A0A] ml-1" />
+            </div>
+
+            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase backdrop-blur-sm">
+              {heroArticle.category}
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 p-5">
-              <span className="inline-block px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] font-medium tracking-wider uppercase mb-3">
-                {heroArticle.category}
-              </span>
-              <h2 className="text-2xl font-semibold leading-tight mb-2 text-white">
+              <h2 className="text-xl font-semibold leading-tight text-white mb-2">
                 {heroArticle.title}
               </h2>
               <p className="text-xs text-[#F2EDE4]/60">
@@ -94,20 +104,32 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* TRENDING */}
-      <section className="px-4 mt-8 max-w-md mx-auto">
-        <h3 className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#F2EDE4]/40 mb-4">Trending Now</h3>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      {/* TRENDING — Horizontal Scroll, 6 cards, diverse categories */}
+      <section className="mt-8 max-w-md mx-auto">
+        <div className="px-4 flex items-center justify-between mb-4">
+          <h3 className="text-sm font-medium text-[#F2EDE4] tracking-wide">Trending Now</h3>
+          <Link href="/explore" className="text-xs text-[#C9A96E] flex items-center gap-1">
+            View all <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="flex gap-4 overflow-x-auto px-4 pb-4 scrollbar-hide snap-x snap-mandatory">
           {trendingArticles.map((article, i) => (
-            <Link key={i} href={`/article/${article.slug}`} className="shrink-0 w-40">
+            <Link key={i} href={`/article/${article.slug}`} className="flex-shrink-0 w-40 snap-start">
               <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-2">
-                <Image src={article.img} alt={article.title} fill className="object-cover" unoptimized />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3">
+                <Image
+                  src={article.img}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform"
+                  unoptimized
+                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 via-transparent to-transparent" />
+                <div className="absolute bottom-2 left-2">
                   <span className="text-[9px] text-[#C9A96E] uppercase tracking-wider">{article.category}</span>
                 </div>
               </div>
-              <h4 className="text-xs font-medium text-[#F2EDE4] leading-snug line-clamp-2">{article.title}</h4>
+              <h4 className="text-xs text-[#F2EDE4] leading-snug line-clamp-2 font-medium">{article.title}</h4>
               <p className="text-[10px] text-[#F2EDE4]/40 mt-1">{article.read_time} min read</p>
             </Link>
           ))}
@@ -115,53 +137,63 @@ export default async function HomePage() {
       </section>
 
       {/* LATEST STORIES */}
-      <section className="px-4 mt-8 max-w-md mx-auto">
+      <section className="mt-8 px-4 max-w-md mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[10px] font-medium tracking-[0.2em] uppercase text-[#F2EDE4]/40">Latest Stories</h3>
-          <Link href="/articles" className="text-[10px] text-[#C9A96E] flex items-center gap-1">View all <ChevronRight className="w-3 h-3" /></Link>
+          <h3 className="text-sm font-medium text-[#F2EDE4] tracking-wide">Latest Stories</h3>
+          <Link href="/explore" className="text-xs text-[#C9A96E] flex items-center gap-1">
+            View all <ChevronRight className="w-3 h-3" />
+          </Link>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {latestArticles.slice(0, 4).map((article: any, i: number) => (
-            <Link key={i} href={`/article/${article.slug}`}>
-              <article className="flex gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C9A96E]/20 transition-all">
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0">
-                  <Image src={article.img || article.image_url || article.cover_image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=400'} alt={article.title} fill className="object-cover" unoptimized />
-                </div>
-                <div className="flex flex-col justify-center min-w-0">
-                  <span className="text-[9px] text-[#C9A96E] uppercase tracking-wider mb-1">{article.category || article.categories?.name}</span>
-                  <h4 className="text-sm font-medium text-[#F2EDE4] leading-snug line-clamp-2">{article.title}</h4>
-                  <p className="text-[10px] text-[#F2EDE4]/40 mt-1">{article.author || 'Voyager'} · {article.read_time} min</p>
-                </div>
-              </article>
+            <Link key={i} href={`/article/${article.slug}`} className="flex gap-3 group">
+              <div className="relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                <Image
+                  src={article.cover_image || article.img || FALLBACK_IMG}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform"
+                  unoptimized
+                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-[#C9A96E] uppercase tracking-wider">{article.category || article.categories?.name}</p>
+                <h4 className="text-sm text-[#F2EDE4] leading-snug group-hover:text-[#C9A96E] transition-colors line-clamp-2">{article.title}</h4>
+                <p className="text-[10px] text-[#F2EDE4]/40 mt-1">{article.author || 'Voyager'} · {article.read_time} min</p>
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
       {/* BOTTOM NAV */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-xl border-t border-white/5">
-        <div className="max-w-md mx-auto flex items-center justify-around px-2 py-2">
-          <Link href="/" className="flex flex-col items-center gap-1 p-2 text-[#C9A96E]">
-            <Home className="w-5 h-5" /><span className="text-[10px] font-medium">Home</span>
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-white/5 z-50">
+        <div className="max-w-md mx-auto px-6 py-3 flex items-center justify-between">
+          <Link href="/" className="flex flex-col items-center gap-1 text-[#C9A96E]">
+            <Home className="w-5 h-5" />
+            <span className="text-[10px]">Home</span>
           </Link>
-          <Link href="/explore" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
-            <Compass className="w-5 h-5" /><span className="text-[10px] font-medium">Explore</span>
+          <Link href="/explore" className="flex flex-col items-center gap-1 text-[#F2EDE4]/40 hover:text-[#C9A96E] transition-colors">
+            <Compass className="w-5 h-5" />
+            <span className="text-[10px]">Explore</span>
           </Link>
-          <Link href="/chat" className="relative -top-4">
-            <div className="w-14 h-14 rounded-full bg-[#C9A96E] flex items-center justify-center shadow-lg shadow-[#C9A96E]/20 hover:scale-105 transition-transform">
-              <MessageCircle className="w-6 h-6 text-[#0A0A0A]" />
+          <Link href="/chat" className="flex flex-col items-center gap-1 text-[#F2EDE4]/40 hover:text-[#C9A96E] transition-colors">
+            <div className="w-10 h-10 rounded-full bg-[#C9A96E] flex items-center justify-center -mt-2">
+              <MessageCircle className="w-5 h-5 text-[#0A0A0A]" />
             </div>
           </Link>
-          <Link href="/saved" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
-            <Bookmark className="w-5 h-5" /><span className="text-[10px] font-medium">Saved</span>
+          <Link href="/saved" className="flex flex-col items-center gap-1 text-[#F2EDE4]/40 hover:text-[#C9A96E] transition-colors">
+            <Bookmark className="w-5 h-5" />
+            <span className="text-[10px]">Saved</span>
           </Link>
-          <Link href="/profile" className="flex flex-col items-center gap-1 p-2 text-[#F2EDE4]/40 hover:text-[#F2EDE4] transition-colors">
-            <User className="w-5 h-5" /><span className="text-[10px] font-medium">Profile</span>
+          <Link href="/profile" className="flex flex-col items-center gap-1 text-[#F2EDE4]/40 hover:text-[#C9A96E] transition-colors">
+            <User className="w-5 h-5" />
+            <span className="text-[10px]">Profile</span>
           </Link>
         </div>
       </nav>
-
     </div>
   );
-      }
-      
+          }
+            
