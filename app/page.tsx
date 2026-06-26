@@ -27,7 +27,6 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(12);
 
-  // HERO: Obi Cubana
   const heroArticle = {
     id: 'obi-cubana-hero',
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
@@ -41,7 +40,6 @@ export default async function HomePage() {
     issue: '01',
   };
 
-  // TRENDING: 6 diverse articles, horizontal scroll
   const trendingArticles = [
     { title: 'Glimmers of Ice and Tomorrow in West Greenland', slug: 'west-greenland', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=600&auto=format&fit=crop' },
     { title: 'Monaco: Where the Mediterranean Meets Majesty', slug: 'monaco', category: 'Travel', author: 'Amara Okafor', read_time: 8, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop' },
@@ -60,7 +58,6 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
 
-      {/* HEADER */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-center relative">
           <h1 className="text-xl font-light tracking-[0.3em] text-[#C9A96E] uppercase font-serif">Voyager</h1>
@@ -68,7 +65,6 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* HERO */}
       <section className="px-4 pt-4 max-w-md mx-auto">
         <Link href={`/article/${heroArticle.slug}`}>
           <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden group">
@@ -79,11 +75,9 @@ export default async function HomePage() {
               className="object-cover"
               priority
               unoptimized
-              onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
 
-            {/* Play button */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center backdrop-blur-sm pointer-events-none">
               <Play className="w-6 h-6 text-[#0A0A0A] fill-[#0A0A0A] ml-1" />
             </div>
@@ -104,7 +98,6 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* TRENDING — Horizontal Scroll, 6 cards, diverse categories */}
       <section className="mt-8 max-w-md mx-auto">
         <div className="px-4 flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#F2EDE4] tracking-wide">Trending Now</h3>
@@ -120,9 +113,8 @@ export default async function HomePage() {
                   src={article.img}
                   alt={article.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform"
+                  className="object-cover"
                   unoptimized
-                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-2 left-2">
@@ -136,7 +128,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* LATEST STORIES */}
       <section className="mt-8 px-4 max-w-md mx-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#F2EDE4] tracking-wide">Latest Stories</h3>
@@ -152,9 +143,8 @@ export default async function HomePage() {
                   src={article.cover_image || article.img || FALLBACK_IMG}
                   alt={article.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform"
+                  className="object-cover"
                   unoptimized
-                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -167,7 +157,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* BOTTOM NAV */}
       <nav className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-white/5 z-50">
         <div className="max-w-md mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex flex-col items-center gap-1 text-[#C9A96E]">
@@ -195,5 +184,5 @@ export default async function HomePage() {
       </nav>
     </div>
   );
-          }
+                }
             
