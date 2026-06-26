@@ -1,94 +1,199 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Home, Compass, Bookmark, User, MessageCircle, Play } from 'lucide-react'
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+
+type Article = {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  image: string;
+  author: string;
+  date: string;
+  readTime: string;
+  premium?: boolean;
+};
+
+const articles: Article[] = [
+  {
+    id: "obi-cubana",
+    title: "The King of Nightlife: How Obi Cubana Built a Billion-Naira Hospitality Empire",
+    excerpt: "From a humble lounge in Oba to a nationwide luxury brand — the inside story of Nigeria's most celebrated hospitality mogul.",
+    category: "Power & Influence",
+    image: "https://scontent-los4-1.xx.fbcdn.net/v/t39.99422-6/728453851_36684042361240550_6147330443937901213_n.png",
+    author: "Voyager Editorial",
+    date: "June 26, 2026",
+    readTime: "8 min",
+    premium: true,
+  },
+  {
+    id: "abuja-luxury",
+    title: "Abuja's Hidden Luxury: The New Gold Standard for Nigerian Real Estate",
+    excerpt: "Inside the gated communities, penthouses, and waterfront estates redefining premium living in the capital.",
+    category: "Real Estate",
+    image: "https://images.unsplash.com/photo-1600596542815-27bfefd0c3c6?w=800&q=80",
+    author: "Amina Bello",
+    date: "June 24, 2026",
+    readTime: "6 min",
+  },
+  {
+    id: "tech-africa",
+    title: "The African Tech Exodus: Why Founders Are Choosing Lagos Over London",
+    excerpt: "A new wave of venture-backed startups is proving that the future of African innovation is being built at home.",
+    category: "Technology",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
+    author: "Chidi Okonkwo",
+    date: "June 22, 2026",
+    readTime: "5 min",
+  },
+  {
+    id: "fashion-week",
+    title: "Lagos Fashion Week 2026: The Designers Who Stole the Show",
+    excerpt: "From avant-garde runway pieces to wearable art, here are the collections everyone is talking about.",
+    category: "Fashion",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+    author: "Zara Adeyemi",
+    date: "June 20, 2026",
+    readTime: "4 min",
+    premium: true,
+  },
+  {
+    id: "kano-culture",
+    title: "Kano's Ancient Walls: A 700-Year Legacy Under Threat",
+    excerpt: "As modern development encroaches, conservationists race to preserve one of Africa's most significant historical landmarks.",
+    category: "Culture",
+    image: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800&q=80",
+    author: "Ibrahim Musa",
+    date: "June 18, 2026",
+    readTime: "7 min",
+  },
+  {
+    id: "wine-dine",
+    title: "Nigeria's Wine Revolution: Sommeliers Changing the Palate",
+    excerpt: "From Nkem to Ngozi, a new generation of certified sommeliers is elevating Nigeria's dining culture.",
+    category: "Lifestyle",
+    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80",
+    author: "Tara Obi",
+    date: "June 15, 2026",
+    readTime: "5 min",
+  },
+];
+
+const galleryImages = [
+  "https://scontent-los4-1.xx.fbcdn.net/v/t39.99422-6/728453851_36684042361240550_6147330443937901213_n.png",
+  "https://scontent-los4-1.xx.fbcdn.net/v/t39.99422-6/727773623_1687747355705523_6174302628346939301_n.png",
+  "https://scontent-los4-1.xx.fbcdn.net/v/t39.30808-6/365699413_773596821232007_8128357802223160569_n.jpg",
+];
 
 export default function HomePage() {
-  const hero = { title: 'Obi Cubana: A Legacy of Influence', slug: 'obi-cubana-legacy-of-influence', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800', cat: 'Culture', author: 'Voyager Editorial', time: 10, issue: '01' }
-  const trend = [
-    { title: 'Glimmers of Ice in West Greenland', slug: 'west-greenland', cat: 'Travel', time: 8, img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400' },
-    { title: 'Monaco: Mediterranean Majesty', slug: 'monaco', cat: 'Travel', time: 8, img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=400' },
-    { title: 'African Art Renaissance', slug: 'african-art-renaissance', cat: 'Art', time: 10, img: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=400' },
-    { title: 'The Rise of Abuja Tech', slug: 'the-rise-of-abuja-tech', cat: 'Business', time: 8, img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=400' },
-    { title: 'Zipp Republic: Mr. P on Stage', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', cat: 'Fashion', time: 6, img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=400' },
-    { title: 'Makoko Floating School', slug: 'makoko-floating-school-the-architecture-of-necessity', cat: 'Architecture', time: 11, img: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400' },
-  ]
-  const latest = [
-    { title: 'The Weavers of Kano', slug: 'weavers-of-kano', cat: 'Culture', img: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=400' },
-    { title: 'Lagos Lagoon: City That Refuses to Drown', slug: 'lagos-lagoon-the-city-that-refuses-to-drown', cat: 'Travel', img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=400' },
-    { title: 'Dunes at Dawn: Saharan Awakening', slug: 'dunes-at-dawn-a-saharan-awakening', cat: 'Travel', img: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400' },
-    { title: 'Lagos Fashion Week: The New Order', slug: 'lagos-fashion-week-the-new-order', cat: 'Fashion', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=400' },
-  ]
+  const [showSplash, setShowSplash] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setLoaded(true), 100);
+    const t2 = setTimeout(() => setShowSplash(false), 2500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  const hero = articles[0];
+
+  if (showSplash) {
+    return (
+      <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0A0A0A] transition-opacity duration-1000 ${loaded ? "opacity-100" : "opacity-0"}`}>
+        <div className="text-[#C9A96E] text-4xl font-serif tracking-[0.3em] mb-4">VOYAGER</div>
+        <div className="text-[#F2EDE4]/60 text-xs tracking-[0.5em] uppercase">Magazine</div>
+        <div className="mt-8 w-24 h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E] to-transparent animate-pulse" />
+      </div>
+    );
+  }
+
   return (
-    <div className='min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24'>
-      <header className='sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5'>
-        <div className='max-w-md mx-auto px-4 py-4 text-center'>
-          <h1 className='text-xl font-light tracking-[0.3em] text-[#C9A96E] uppercase'>Voyager</h1>
+    <main className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4]">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0A0A0A]/90 backdrop-blur-md border-b border-[#C9A96E]/10">
+        <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+          <span className="text-[#C9A96E] font-serif text-lg tracking-[0.2em]">VOYAGER</span>
+          <Link href="/chat" className="text-[10px] tracking-widest uppercase text-[#C9A96E] border border-[#C9A96E]/30 px-3 py-1 rounded-full">AI Brain</Link>
         </div>
       </header>
-      <section className='px-4 pt-4 max-w-md mx-auto'>
-        <Link href={'/article/' + hero.slug}>
-          <div className='relative w-full aspect-[4/5] rounded-3xl overflow-hidden'>
-            <Image src={hero.img} alt={hero.title} fill className='object-cover' priority unoptimized />
-            <div className='absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent' />
-            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#C9A96E]/90 flex items-center justify-center'>
-              <Play className='w-6 h-6 text-[#0A0A0A] fill-[#0A0A0A] ml-1' />
+
+      <div className="pt-14 pb-24 max-w-md mx-auto">
+        {/* Hero */}
+        <section className="relative h-[70vh] w-full overflow-hidden">
+          <Image src={hero.image} alt={hero.title} fill className="object-cover" priority unoptimized />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <span className="text-[#C9A96E] text-[10px] tracking-[0.3em] uppercase">{hero.category}</span>
+            <h1 className="text-2xl font-serif leading-tight mt-2 mb-3">{hero.title}</h1>
+            <p className="text-sm text-[#F2EDE4]/70 leading-relaxed mb-4">{hero.excerpt}</p>
+            <div className="flex items-center gap-3 text-[10px] text-[#F2EDE4]/50">
+              <span>{hero.author}</span><span>•</span><span>{hero.date}</span><span>•</span><span>{hero.readTime}</span>
             </div>
-            <div className='absolute top-4 left-4 px-3 py-1 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/40 text-[#C9A96E] text-[10px] uppercase tracking-wider'>{hero.cat}</div>
-            <div className='absolute bottom-0 left-0 right-0 p-5'>
-              <h2 className='text-xl font-semibold text-white mb-2'>{hero.title}</h2>
-              <p className='text-xs text-[#F2EDE4]/60'>{hero.author} &middot; {hero.time} min &middot; Issue {hero.issue}</p>
-            </div>
+            {hero.premium && <span className="inline-block mt-3 text-[9px] tracking-widest uppercase bg-[#C9A96E]/20 text-[#C9A96E] px-2 py-1 rounded">Premium</span>}
+            <Link href={`/article/${hero.id}`} className="block mt-4 text-center bg-[#C9A96E] text-[#0A0A0A] text-xs font-semibold tracking-widest uppercase py-3 rounded-sm">Read Article</Link>
           </div>
-        </Link>
-      </section>
-      <section className='mt-8 max-w-md mx-auto'>
-        <div className='px-4 flex justify-between mb-4'>
-          <h3 className='text-sm font-medium'>Trending Now</h3>
-          <Link href='/explore' className='text-xs text-[#C9A96E]'>View all &rarr;</Link>
-        </div>
-        <div className='flex gap-4 overflow-x-auto px-4 pb-4 snap-x'>
-          {trend.map((a, i) => (
-            <Link key={i} href={'/article/' + a.slug} className='flex-shrink-0 w-40 snap-start'>
-              <div className='relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-2'>
-                <Image src={a.img} alt={a.title} fill className='object-cover' unoptimized />
-                <div className='absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent' />
-                <span className='absolute bottom-2 left-2 text-[9px] text-[#C9A96E] uppercase'>{a.cat}</span>
+        </section>
+
+        {/* Gallery */}
+        <section className="px-4 py-6">
+          <h2 className="text-[10px] tracking-[0.3em] uppercase text-[#C9A96E] mb-4">In Focus</h2>
+          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2">
+            {galleryImages.map((src, i) => (
+              <div key={i} className="snap-start flex-shrink-0 w-[280px] h-[180px] relative rounded overflow-hidden">
+                <Image src={src} alt={`Gallery ${i + 1}`} fill className="object-cover" unoptimized />
               </div>
-              <h4 className='text-xs text-[#F2EDE4] leading-snug line-clamp-2 font-medium'>{a.title}</h4>
-              <p className='text-[10px] text-[#F2EDE4]/40 mt-1'>{a.time} min read</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className='mt-8 px-4 max-w-md mx-auto'>
-        <div className='flex justify-between mb-4'>
-          <h3 className='text-sm font-medium'>Latest Stories</h3>
-          <Link href='/explore' className='text-xs text-[#C9A96E]'>View all &rarr;</Link>
-        </div>
-        <div className='space-y-4'>
-          {latest.map((a, i) => (
-            <Link key={i} href={'/article/' + a.slug} className='flex gap-3 group'>
-              <div className='relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0'>
-                <Image src={a.img} alt={a.title} fill className='object-cover' unoptimized />
-              </div>
-              <div className='flex-1 min-w-0'>
-                <p className='text-[10px] text-[#C9A96E] uppercase'>{a.cat}</p>
-                <h4 className='text-sm text-[#F2EDE4] leading-snug line-clamp-2 group-hover:text-[#C9A96E]'>{a.title}</h4>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <nav className='fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/95 backdrop-blur border-t border-white/5 z-50'>
-        <div className='max-w-md mx-auto px-6 py-3 flex justify-between'>
-          <Link href='/' className='flex flex-col items-center gap-1 text-[#C9A96E]'><Home className='w-5 h-5' /><span className='text-[10px]'>Home</span></Link>
-          <Link href='/explore' className='flex flex-col items-center gap-1 text-[#F2EDE4]/40'><Compass className='w-5 h-5' /><span className='text-[10px]'>Explore</span></Link>
-          <Link href='/chat' className='flex flex-col items-center gap-1 text-[#F2EDE4]/40'><div className='w-10 h-10 rounded-full bg-[#C9A96E] flex items-center justify-center -mt-2'><MessageCircle className='w-5 h-5 text-[#0A0A0A]' /></div></Link>
-          <Link href='/saved' className='flex flex-col items-center gap-1 text-[#F2EDE4]/40'><Bookmark className='w-5 h-5' /><span className='text-[10px]'>Saved</span></Link>
-          <Link href='/profile' className='flex flex-col items-center gap-1 text-[#F2EDE4]/40'><User className='w-5 h-5' /><span className='text-[10px]'>Profile</span></Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Feed */}
+        <section className="px-4">
+          <h2 className="text-[10px] tracking-[0.3em] uppercase text-[#C9A96E] mb-4">Latest Stories</h2>
+          <div className="space-y-6">
+            {articles.slice(1).map((a) => (
+              <Link key={a.id} href={`/article/${a.id}`} className="block group">
+                <div className="relative h-[200px] w-full rounded overflow-hidden mb-3">
+                  <Image src={a.image} alt={a.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" unoptimized />
+                  {a.premium && <span className="absolute top-2 right-2 text-[9px] tracking-widest uppercase bg-[#C9A96E]/20 text-[#C9A96E] px-2 py-1 rounded backdrop-blur-sm">Premium</span>}
+                </div>
+                <span className="text-[#C9A96E] text-[10px] tracking-[0.3em] uppercase">{a.category}</span>
+                <h3 className="text-base font-serif leading-snug mt-1 mb-2 group-hover:text-[#C9A96E] transition-colors">{a.title}</h3>
+                <p className="text-sm text-[#F2EDE4]/60 leading-relaxed mb-2 line-clamp-2">{a.excerpt}</p>
+                <div className="flex items-center gap-3 text-[10px] text-[#F2EDE4]/40">
+                  <span>{a.author}</span><span>•</span><span>{a.readTime}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Bottom Nav */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-[#C9A96E]/10">
+        <div className="max-w-md mx-auto px-6 h-14 flex items-center justify-around">
+          <button onClick={() => router.push("/")} className="flex flex-col items-center gap-1 text-[#C9A96E]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span className="text-[9px] tracking-wider">Home</span>
+          </button>
+          <button onClick={() => router.push("/bookmarks")} className="flex flex-col items-center gap-1 text-[#F2EDE4]/40">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            <span className="text-[9px] tracking-wider">Saved</span>
+          </button>
+          <button onClick={() => router.push("/chat")} className="flex flex-col items-center gap-1 text-[#F2EDE4]/40">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span className="text-[9px] tracking-wider">Chat</span>
+          </button>
+          <button onClick={() => router.push("/profile")} className="flex flex-col items-center gap-1 text-[#F2EDE4]/40">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span className="text-[9px] tracking-wider">Me</span>
+          </button>
         </div>
       </nav>
-    </div>
-  )
-                      }
-              
+    </main>
+  );
+        }
+        
