@@ -35,7 +35,6 @@ async function getExploreData() {
 export default async function ExplorePage() {
   const { categories, trending } = await getExploreData();
 
-  // Fallback trending if DB empty
   const fallbackTrending = [
     { id: '1', slug: 'lagos-lagoon-the-city-that-refuses-to-drown', title: 'Lagos Lagoon: The City That Refuses to Drown', cover_image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=400&auto=format&fit=crop', category: { name: 'Travel' } },
     { id: '2', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', cover_image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=400&auto=format&fit=crop', category: { name: 'Fashion' } },
@@ -52,7 +51,6 @@ export default async function ExplorePage() {
       <div className="p-4 pt-6">
         <h1 className="font-serif text-2xl text-[#F2EDE4] mb-4">Explore</h1>
 
-        {/* Search Link */}
         <Link
           href="/search"
           className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/10 p-4 mb-6"
@@ -61,7 +59,6 @@ export default async function ExplorePage() {
           <span className="text-[#F2EDE4]/40 text-sm">Search articles, topics, places...</span>
         </Link>
 
-        {/* Categories */}
         <h2 className="text-[#F2EDE4] font-medium text-sm mb-3">Categories</h2>
         <div className="grid grid-cols-2 gap-3 mb-8">
           {categories.map((cat) => (
@@ -76,7 +73,6 @@ export default async function ExplorePage() {
                 fill 
                 className="object-cover group-hover:scale-105 transition-transform" 
                 unoptimized
-                onError={(e) => { (e.target as HTMLImageElement).src = CATEGORY_FALLBACKS[cat.name] || FALLBACK_IMG; }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3">
@@ -87,7 +83,6 @@ export default async function ExplorePage() {
           ))}
         </div>
 
-        {/* Trending */}
         <h2 className="flex items-center gap-2 text-[#F2EDE4] font-medium text-sm mb-3">
           <TrendingUp className="w-4 h-4 text-[#C9A96E]" />
           Trending
@@ -102,7 +97,6 @@ export default async function ExplorePage() {
                   fill 
                   className="object-cover" 
                   unoptimized
-                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -115,5 +109,4 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-      }
-                
+}
