@@ -15,10 +15,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// Fallback image for broken loads
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=800&auto=format&fit=crop';
 
-// Hardcoded fallback articles for demo slugs
 const fallbackArticles: Record<string, any> = {
   'obi-cubana-legacy-of-influence': {
     title: 'Obi Cubana: A Legacy of Influence in Nigerian Business',
@@ -170,7 +168,6 @@ const fallbackArticles: Record<string, any> = {
 };
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
-  // 1. Try Supabase first
   const { data: dbArticle } = await supabase
     .from('articles')
     .select('*, categories(name)')
@@ -178,7 +175,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     .eq('status', 'published')
     .maybeSingle();
 
-  // 2. Fallback to hardcoded
   const article = dbArticle || fallbackArticles[params.slug];
 
   if (!article) {
@@ -190,7 +186,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     { type: 'text', text: article.excerpt || article.content || 'Full article content coming soon.' }
   ];
 
-  // Fetch related articles
   const { data: related } = await supabase
     .from('articles')
     .select('slug, title, cover_image, category:categories(name)')
@@ -207,7 +202,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
 
-      {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors">
@@ -217,23 +211,13 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors">
               <Bookmark className="w-4 h-4 text-[#F2EDE4]" />
             </button>
-            <button 
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({ title: article.title, url: window.location.href });
-                } else {
-                  navigator.clipboard.writeText(window.location.href);
-                }
-              }}
-              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors"
-            >
+            <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-[#C9A96E]/50 transition-colors">
               <Share2 className="w-4 h-4 text-[#F2EDE4]" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Hero Image — NO THUMBNAIL STRIP */}
       <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
         <Image
           src={images[0]}
@@ -242,16 +226,13 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           className="object-cover"
           priority
           unoptimized
-          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
 
-        {/* Image counter only */}
         <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs text-white">
           1 / {images.length}
         </div>
 
-        {/* Play button — scrolls to video */}
         {article.video_url && (
           <a 
             href="#video-embed" 
@@ -274,10 +255,8 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
       </div>
 
-      {/* Article Content */}
       <article className="px-5 py-6 max-w-md mx-auto space-y-6">
 
-        {/* YOUTUBE EMBED */}
         {article.video_url && (
           <div id="video-embed" className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
             <iframe
@@ -309,14 +288,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             return (
               <figure key={i} className="my-6">
                 <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
-                  <Image 
-                    src={block.src} 
-                    alt={block.caption || ''} 
-                    fill 
-                    className="object-cover" 
-                    unoptimized 
-                    onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
-                  />
+                  <Image src={block.src} alt={block.caption || ''} fill className="object-cover" unoptimized />
                 </div>
                 <figcaption className="text-[10px] text-[#F2EDE4]/40 mt-2 text-center">{block.caption}</figcaption>
               </figure>
@@ -326,7 +298,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         })}
       </article>
 
-      {/* Sponsored Ad */}
       <div className="px-5 max-w-md mx-auto mb-8">
         <div className="rounded-2xl bg-gradient-to-r from-[#C9A96E]/10 to-transparent border border-[#C9A96E]/20 p-5">
           <p className="text-[10px] text-[#C9A96E] uppercase tracking-wider mb-2">Sponsored</p>
@@ -336,7 +307,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
       </div>
 
-      {/* Related Articles */}
       <section className="px-5 max-w-md mx-auto pb-8">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#F2EDE4]">Read Next</h3>
@@ -354,7 +324,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                   fill 
                   className="object-cover group-hover:scale-105 transition-transform" 
                   unoptimized
-                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -367,5 +336,4 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </section>
     </div>
   );
-    }
-       
+}
