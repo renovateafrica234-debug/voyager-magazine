@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 :root {
+  /* ── Dark palette (homepage/chat) ── */
   --gold: #C9A96E;
   --gold-light: #D4B87A;
   --gold-dark: #B8985A;
@@ -12,11 +13,17 @@
   --dark-elevated: #141414;
   --cream: #F2EDE4;
   --cream-muted: #E8E2D6;
+
+  /* ── Light palette (article/category/bookmarks) ── */
+  --off-white: #F0EEE9;      /* primary background */
+  --grey-light: #E8E5DF;     /* card backgrounds */
+  --grey-mid: #D4D0C8;       /* dividers, borders */
+  --ink: #1A1A1A;            /* primary text */
+  --ink-muted: #6B6B6B;      /* secondary text */
+  --ink-ghost: rgba(26,26,26,0.25); /* placeholders */
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
@@ -32,33 +39,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark); }
+::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+::selection { background: rgba(201,169,110,0.3); color: var(--cream); }
 
-::-webkit-scrollbar-track {
-  background: var(--dark);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-dark);
-}
-
-/* Selection */
-::selection {
-  background: rgba(201, 169, 110, 0.3);
-  color: var(--cream);
-}
-
-/* Typography */
+/* ── DARK MODE: Article reading typography ── */
 .article-content h2 {
-  font-family: Georgia, Cambria, serif;
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
   font-size: 1.75rem;
   font-weight: 400;
   color: var(--cream);
@@ -66,25 +56,22 @@ body {
   margin-bottom: 1rem;
   line-height: 1.3;
 }
-
 .article-content h3 {
-  font-family: Georgia, Cambria, serif;
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
   font-size: 1.35rem;
   font-weight: 400;
   color: var(--gold);
   margin-top: 2rem;
   margin-bottom: 0.75rem;
 }
-
 .article-content p {
   font-size: 1.125rem;
   line-height: 1.8;
   color: #C9C5BC;
   margin-bottom: 1.5rem;
 }
-
 .article-content p:first-of-type::first-letter {
-  font-family: Georgia, Cambria, serif;
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
   font-size: 4rem;
   float: left;
   line-height: 0.8;
@@ -92,93 +79,135 @@ body {
   padding-top: 0.25rem;
   color: var(--gold);
 }
-
-.article-content em {
-  color: var(--gold-light);
-  font-style: italic;
-}
-
+.article-content em { color: var(--gold-light); font-style: italic; }
 .article-content blockquote {
   border-left: 3px solid var(--gold);
   padding-left: 1.5rem;
   margin: 2rem 0;
-  font-family: Georgia, Cambria, serif;
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
   font-size: 1.25rem;
   font-style: italic;
   color: #B8B4AB;
 }
+.article-content hr { border: none; border-top: 1px solid #2A2A2A; margin: 3rem 0; }
 
-.article-content hr {
-  border: none;
-  border-top: 1px solid #2A2A2A;
-  margin: 3rem 0;
+/* ── LIGHT MODE: Article reading typography (off-white background) ── */
+.article-content-light h2 {
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
 }
+.article-content-light h3 {
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+.article-content-light p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #3A3A3A;
+  margin-bottom: 1.5rem;
+}
+.article-content-light p:first-of-type::first-letter {
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
+  font-size: 3.5rem;
+  float: left;
+  line-height: 0.85;
+  padding-right: 0.6rem;
+  padding-top: 0.2rem;
+  color: var(--gold);
+}
+.article-content-light em { color: #8B7355; font-style: italic; }
+.article-content-light blockquote {
+  border-left: 2px solid var(--gold);
+  padding: 1rem 1.25rem;
+  margin: 2rem 0;
+  background: rgba(201,169,110,0.06);
+  border-radius: 0 8px 8px 0;
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #5A5A5A;
+  line-height: 1.7;
+}
+.article-content-light strong { color: var(--ink); font-weight: 600; }
+.article-content-light hr { border: none; border-top: 1px solid rgba(26,26,26,0.12); margin: 2.5rem 0; }
 
-/* Glassmorphism */
+/* ── GLASSMORPHISM ── */
 .glass {
-  background: rgba(20, 20, 20, 0.7);
+  background: rgba(20,20,20,0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255,255,255,0.05);
 }
-
 .glass-light {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255,255,255,0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 169, 110, 0.1);
+  border: 1px solid rgba(201,169,110,0.1);
+}
+/* Off-white glass for light pages */
+.glass-offwhite {
+  background: rgba(240,238,233,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(26,26,26,0.08);
 }
 
-/* Animations */
+/* ── SHIMMER SKELETON ── */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .shimmer-bg {
   background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+.shimmer-light {
+  background: linear-gradient(90deg, #E8E5DF 25%, #D4D0C8 50%, #E8E5DF 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
 
-/* Paywall blur */
+/* ── PAYWALL FADE ── */
 .paywall-blur {
   mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
 }
 
-/* Image hover zoom */
-.img-zoom {
-  overflow: hidden;
-}
-
+/* ── IMAGE HOVER ZOOM ── */
+.img-zoom { overflow: hidden; }
 .img-zoom img {
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+.img-zoom:hover img { transform: scale(1.05); }
 
-.img-zoom:hover img {
-  transform: scale(1.05);
-}
+/* ── UTILITIES ── */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
 
-/* Bottom nav safe area */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-/* Focus styles */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible {
+button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
-/* Hide scrollbar for horizontal scroll */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* ── CARD ELEVATION — light pages ── */
+.card-light {
+  background: #FFFFFF;
+  border: 1px solid rgba(26,26,26,0.07);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
 }
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+.card-offwhite {
+  background: var(--grey-light);
+  border: 1px solid rgba(26,26,26,0.06);
+  border-radius: 16px;
 }
