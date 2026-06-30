@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
-import ArticleImage from "./components/ArticleImage";
 
 const CAT_IMAGES: Record<string, string> = {
   Architecture: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400',
@@ -12,6 +11,17 @@ const CAT_IMAGES: Record<string, string> = {
   Business: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=400',
   Wellness: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=400',
 };
+
+const FALLBACKS = [
+  'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400',
+  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=400',
+  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400',
+  'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400',
+  'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400',
+  'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=400',
+  'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=400',
+  'https://images.unsplash.com/photo-1523995462480-afd941d1d153?q=80&w=400',
+];
 
 async function getData() {
   const sb = createServerClient();
@@ -25,12 +35,48 @@ async function getData() {
 }
 
 const FB_TREND = [
-  { id: '1', slug: 'lagos-lagoon-the-city-that-refuses-to-drown', title: 'Lagos Lagoon: The City That Refuses to Drown', cover_image: 'https://images.unsplash.com/photo-1523995462480-afd941d1d153?q=80&w=400', category: { name: 'Travel' } },
-  { id: '2', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', cover_image: 'https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=400', category: { name: 'Fashion' } },
-  { id: '3', slug: 'lagos-fashion-week-the-new-order', title: 'Lagos Fashion Week: The New Order', cover_image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=400', category: { name: 'Fashion' } },
-  { id: '4', slug: 'makoko-floating-school-the-architecture-of-necessity', title: 'Makoko Floating School: The Architecture of Necessity', cover_image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400', category: { name: 'Architecture' } },
-  { id: '5', slug: 'dunes-at-dawn-a-saharan-awakening', title: 'Dunes at Dawn: A Saharan Awakening', cover_image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400', category: { name: 'Travel' } },
-  { id: '6', slug: 'forest-bathing-in-the-atewa-range', title: 'Forest Bathing in the Atewa Range', cover_image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400', category: { name: 'Wellness' } },
+  { 
+    id: '1', 
+    slug: 'lagos-lagoon-the-city-that-refuses-to-drown', 
+    title: 'Lagos Lagoon: The City That Refuses to Drown', 
+    cover_image: 'https://images.unsplash.com/photo-1503327776731-4970f83d0f2e?q=80&w=400', 
+    category: { name: 'Travel' } 
+  },
+  { 
+    id: '2', 
+    slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', 
+    title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', 
+    cover_image: '/images/zipp-republic.jpg', 
+    category: { name: 'Fashion' } 
+  },
+  { 
+    id: '3', 
+    slug: 'lagos-fashion-week-the-new-order', 
+    title: 'Lagos Fashion Week: The New Order', 
+    cover_image: '/images/lagos-fashion-week.jpg', 
+    category: { name: 'Fashion' } 
+  },
+  { 
+    id: '4', 
+    slug: 'makoko-floating-school-the-architecture-of-necessity', 
+    title: 'Makoko Floating School: The Architecture of Necessity', 
+    cover_image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400', 
+    category: { name: 'Architecture' } 
+  },
+  { 
+    id: '5', 
+    slug: 'dunes-at-dawn-a-saharan-awakening', 
+    title: 'Dunes at Dawn: A Saharan Awakening', 
+    cover_image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400', 
+    category: { name: 'Travel' } 
+  },
+  { 
+    id: '6', 
+    slug: 'forest-bathing-in-the-atewa-range', 
+    title: 'Forest Bathing in the Atewa Range', 
+    cover_image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400', 
+    category: { name: 'Wellness' } 
+  },
 ];
 
 export default async function ExplorePage() {
@@ -53,7 +99,13 @@ export default async function ExplorePage() {
         <div className="grid grid-cols-2 gap-3">
           {cats.map((cat: any) => (
             <Link key={cat.id} href={`/category/${cat.slug}`} className="relative h-[100px] rounded-xl overflow-hidden group">
-              <ArticleImage src={CAT_IMAGES[cat.name] || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400'} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img
+                src={CAT_IMAGES[cat.name] || FALLBACKS[0]}
+                alt={cat.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                onError={(e) => { (e.target as HTMLImageElement).src = FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)]; }}
+                loading="lazy"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent" />
               <div className="absolute bottom-3 left-3">
                 <p className="text-sm font-medium">{cat.name}</p>
@@ -68,7 +120,13 @@ export default async function ExplorePage() {
           {display.map((a: any) => (
             <Link key={a.id} href={`/article/${a.slug || a.id}`} className="flex gap-4 group">
               <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
-                <ArticleImage src={a.cover_image || a.image || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400'} alt={a.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img
+                  src={a.cover_image || a.image || FALLBACKS[0]}
+                  alt={a.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)]; }}
+                  loading="lazy"
+                />
               </div>
               <div className="flex-1 py-1">
                 <span className="text-[#C9A96E] text-[10px] tracking-wider uppercase">{a.category?.name || a.category || 'Voyager'}</span>
@@ -80,5 +138,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-              }
-              
+                                                  }
+                
