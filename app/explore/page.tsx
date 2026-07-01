@@ -35,48 +35,12 @@ async function getData() {
 }
 
 const FB_TREND = [
-  { 
-    id: '1', 
-    slug: 'lagos-lagoon-the-city-that-refuses-to-drown', 
-    title: 'Lagos Lagoon: The City That Refuses to Drown', 
-    cover_image: 'https://images.unsplash.com/photo-1503327776731-4970f83d0f2e?q=80&w=400', 
-    category: { name: 'Travel' } 
-  },
-  { 
-    id: '2', 
-    slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', 
-    title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', 
-    cover_image: '/images/zipp-republic.jpg', 
-    category: { name: 'Fashion' } 
-  },
-  { 
-    id: '3', 
-    slug: 'lagos-fashion-week-the-new-order', 
-    title: 'Lagos Fashion Week: The New Order', 
-    cover_image: '/images/lagos-fashion-week.jpg', 
-    category: { name: 'Fashion' } 
-  },
-  { 
-    id: '4', 
-    slug: 'makoko-floating-school-the-architecture-of-necessity', 
-    title: 'Makoko Floating School: The Architecture of Necessity', 
-    cover_image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400', 
-    category: { name: 'Architecture' } 
-  },
-  { 
-    id: '5', 
-    slug: 'dunes-at-dawn-a-saharan-awakening', 
-    title: 'Dunes at Dawn: A Saharan Awakening', 
-    cover_image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400', 
-    category: { name: 'Travel' } 
-  },
-  { 
-    id: '6', 
-    slug: 'forest-bathing-in-the-atewa-range', 
-    title: 'Forest Bathing in the Atewa Range', 
-    cover_image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400', 
-    category: { name: 'Wellness' } 
-  },
+  { id: '1', slug: 'lagos-lagoon-the-city-that-refuses-to-drown', title: 'Lagos Lagoon: The City That Refuses to Drown', cover_image: 'https://images.unsplash.com/photo-1503327776731-4970f83d0f2e?q=80&w=400', category: { name: 'Travel' } },
+  { id: '2', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', cover_image: '/images/zipp-republic.jpg', category: { name: 'Fashion' } },
+  { id: '3', slug: 'lagos-fashion-week-the-new-order', title: 'Lagos Fashion Week: The New Order', cover_image: '/images/lagos-fashion-week.jpg', category: { name: 'Fashion' } },
+  { id: '4', slug: 'makoko-floating-school-the-architecture-of-necessity', title: 'Makoko Floating School: The Architecture of Necessity', cover_image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400', category: { name: 'Architecture' } },
+  { id: '5', slug: 'dunes-at-dawn-a-saharan-awakening', title: 'Dunes at Dawn: A Saharan Awakening', cover_image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400', category: { name: 'Travel' } },
+  { id: '6', slug: 'forest-bathing-in-the-atewa-range', title: 'Forest Bathing in the Atewa Range', cover_image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400', category: { name: 'Wellness' } },
 ];
 
 export default async function ExplorePage() {
@@ -138,5 +102,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-                                                  }
-                
+      }
+          
