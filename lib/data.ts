@@ -13,6 +13,7 @@ export type Article = {
   readTime: string;
   premium?: boolean;
   video?: boolean;
+  videoUrl?: string;
 };
 
 export const articles: Article[] = [
@@ -39,6 +40,7 @@ His latest ventures into luxury real estate and import-export signal a maturatio
     readTime: "10 min",
     premium: true,
     video: true,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: "abuja-luxury",
@@ -48,10 +50,12 @@ His latest ventures into luxury real estate and import-export signal a maturatio
 
 The city's unique position as Nigeria's political capital has created a concentration of wealth that demands world-class amenities. Gated estates now feature smart home technology, private cinemas, and concierge services that would feel at home in Dubai or London.
 
-What makes Abuja's luxury market distinct is its blend of space and serenity. Unlike Lagos, where luxury often means vertical living, Abuja offers sprawling estates with genuine privacy — a rarity in modern African cities.`,
+What makes Abuja's luxury market distinct is its blend of space and serenity. Unlike Lagos, where luxury often means vertical living, Abuja offers sprawling estates with genuine privacy — a rarity in modern African cities.
+
+Developers like Sujimoto, RevolutionPlus, and local Abuja firms are raising the bar with architectural designs that reference Nigerian heritage while embracing contemporary minimalism. The result is a built environment that feels both globally competitive and authentically local.`,
     category: "Travel",
-    image: "/images/obi-cubana-3.jpg",
-    gallery: ["/images/Obi-Cubana2.jpg", "/images/Obi-cubana-2-.jpeg"],
+    image: "/images/abuja-luxury.jpg",
+    gallery: ["/images/abuja-luxury.jpg", "/images/obi-cubana-3.jpg"],
     author: "Amina Bello",
     authorRole: "Real Estate Editor",
     authorImage: "/images/obi-cubana.jpg",
@@ -66,10 +70,12 @@ What makes Abuja's luxury market distinct is its blend of space and serenity. Un
 
 From the iconic Casino de Monte-Carlo to the harbor filled with superyachts, Monaco represents the pinnacle of European sophistication. But beyond the glitz lies a surprisingly livable city-state with excellent infrastructure, world-class healthcare, and unmatched security.
 
-For African entrepreneurs and creatives, Monaco offers something increasingly rare: a neutral ground where business can be conducted without the baggage of colonial history or geopolitical tension.`,
+For African entrepreneurs and creatives, Monaco offers something increasingly rare: a neutral ground where business can be conducted without the baggage of colonial history or geopolitical tension. It's a place where Nigerian tech founders meet Saudi investors over breakfast, where art dealers from Lagos close deals with galleries from Tokyo.
+
+The annual Monaco Yacht Show and Grand Prix remain the most important social calendars in the global luxury industry. For Voyager readers, Monaco is both aspiration and inspiration — proof that small places can cast long shadows.`,
     category: "Travel",
-    image: "/images/Obi-Cubana2.jpg",
-    gallery: ["/images/obi-cubana-3.jpg"],
+    image: "/images/monaco.jpg",
+    gallery: ["/images/monaco.jpg", "/images/obi-cubana-3.jpg"],
     author: "Tara Obi",
     authorRole: "Travel Editor",
     authorImage: "/images/obi-cubana.jpg",
@@ -77,17 +83,22 @@ For African entrepreneurs and creatives, Monaco offers something increasingly ra
     readTime: "5 min",
     premium: true,
     video: true,
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: "greenland",
     title: "Glimmers of Ice: Greenland",
     excerpt: "The world's largest island offers a landscape so dramatic it feels otherworldly.",
-    content: `Greenland defies every expectation. It's the world's largest island, yet home to only 56,000 people. It's covered in ice, yet warming faster than anywhere on Earth.
+    content: `Greenland defies every expectation. It's the world's largest island, yet home to only 56,000 people. It's covered in ice, yet warming faster than anywhere on Earth. It's part of the Kingdom of Denmark, yet fiercely independent in spirit.
 
-For the adventurous traveler, Greenland offers experiences that simply don't exist elsewhere. The Ilulissat Icefjord, a UNESCO World Heritage site, calves icebergs the size of city blocks into Disko Bay. The Northern Lights dance across the sky for months on end.`,
+For the adventurous traveler, Greenland offers experiences that simply don't exist elsewhere. The Ilulissat Icefjord, a UNESCO World Heritage site, calves icebergs the size of city blocks into Disko Bay. The Northern Lights dance across the sky for months on end. And the silence — profound, absolute silence — is a luxury in itself.
+
+The Inuit culture that has thrived here for 4,500 years offers lessons in resilience and harmony with nature that feel urgently relevant. Their approach to community, storytelling, and sustainable living provides a counterpoint to the excesses of modern luxury.
+
+Voyager visited West Greenland in the height of summer, when the midnight sun turns the ice cap into a landscape of impossible blues and golds. What we found was not just a destination, but a reminder of how small we are — and how much wonder remains in the world.`,
     category: "Travel",
-    image: "/images/Obi-cubana-2-.jpeg",
-    gallery: ["/images/obi-cubana-3.jpg"],
+    image: "/images/greenland.jpg",
+    gallery: ["/images/greenland.jpg", "/images/obi-cubana-3.jpg"],
     author: "Zara Adeyemi",
     authorRole: "Culture Editor",
     authorImage: "/images/obi-cubana.jpg",
@@ -100,10 +111,14 @@ For the adventurous traveler, Greenland offers experiences that simply don't exi
     excerpt: "From avant-garde runway pieces to wearable art, here are the collections everyone is talking about.",
     content: `Lagos Fashion Week 2026 will be remembered as the year Nigerian design fully claimed its place on the global stage. The runways at the Federal Palace Hotel showcased collections that were unapologetically African in inspiration and uncompromisingly global in execution.
 
-Standout moments included Kenneth Ize's continuation of his aso-oke revolution, Mowalola's provocative fusion of Yoruba tailoring with London streetwear, and emerging designer Aisha Kabir's sculptural pieces that referenced Hausa architecture.`,
+Standout moments included Kenneth Ize's continuation of his aso-oke revolution, Mowalola's provocative fusion of Yoruba tailoring with London streetwear, and emerging designer Aisha Kabir's sculptural pieces that referenced Hausa architecture.
+
+What distinguished this year's event was the commercial sophistication. Buyers from Net-a-Porter, Browns Fashion, and The Folklore were in attendance, and pre-orders for several collections exceeded projections by 300%.
+
+The after-parties, as always, were where the real business happened. From the Cubana Lounge takeover to the exclusive dinner at Nok by Alara, Lagos Fashion Week proved it's not just a fashion event — it's the most important cultural gathering in contemporary Africa.`,
     category: "Fashion",
-    image: "/images/obi-cubana-3.jpg",
-    gallery: ["/images/Obi-Cubana2.jpg", "/images/Obi-cubana-2-.jpeg"],
+    image: "/images/fashion-week.jpg",
+    gallery: ["/images/lagos-fashion-week.jpg", "/images/zipp-republic.jpg", "/images/zipp-blue.jpg"],
     author: "Zara Adeyemi",
     authorRole: "Culture Editor",
     authorImage: "/images/obi-cubana.jpg",
@@ -117,10 +132,14 @@ Standout moments included Kenneth Ize's continuation of his aso-oke revolution, 
     excerpt: "As modern development encroaches, conservationists race to preserve one of Africa's most significant historical landmarks.",
     content: `The ancient walls of Kano, stretching 14 kilometers and rising up to 15 meters in places, have stood since the 14th century. They are the most complete example of medieval African military architecture surviving anywhere on the continent.
 
-But today, the walls face an existential threat. Urban expansion, lack of maintenance funding, and climate-induced erosion are combining to destroy a heritage that belongs not just to Nigeria, but to all of humanity.`,
+But today, the walls face an existential threat. Urban expansion, lack of maintenance funding, and climate-induced erosion are combining to destroy a heritage that belongs not just to Nigeria, but to all of humanity.
+
+The Kano State government, in partnership with UNESCO and private conservation groups, has launched an ambitious restoration project. The goal is to stabilize the remaining walls and develop a heritage tourism circuit that could generate significant revenue for the local economy.
+
+For Voyager, this is a story about choices. Nigeria is a young country in a hurry to develop. But development that erases history is not progress — it's amnesia. The walls of Kano are a test of whether we can build the future while honoring the past.`,
     category: "Culture",
-    image: "/images/Obi-Cubana2.jpg",
-    gallery: ["/images/obi-cubana-3.jpg"],
+    image: "/images/kano-walls.jpg",
+    gallery: ["/images/kano-walls.jpg", "/images/obi-cubana-3.jpg"],
     author: "Ibrahim Musa",
     authorRole: "History Correspondent",
     authorImage: "/images/obi-cubana.jpg",
@@ -149,6 +168,7 @@ export const editors = [
 ];
 
 export const ads = [
-  { id: "ad1", title: "Emirates First Class", subtitle: "Abuja → Dubai from ₦2.4M", image: "/images/Obi-cubana-2-.jpeg", cta: "Book Now" },
-  { id: "ad2", title: "WhiteLion Voyage", subtitle: "Luxury African Expeditions", image: "/images/Obi-Cubana2.jpg", cta: "Explore" },
+  { id: "ad1", title: "Emirates First Class", subtitle: "Abuja → Dubai from ₦2.4M", image: "/images/ad-emirates.jpg", cta: "Book Now" },
+  { id: "ad2", title: "WhiteLion Voyage", subtitle: "Luxury African Expeditions", image: "/images/ad-whitelion.jpg", cta: "Explore" },
 ];
+    
