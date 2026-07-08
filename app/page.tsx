@@ -287,5 +287,5 @@ export default function HomePage() {
       </nav>
     </main>
   );
-}
-  
+          }
+        
