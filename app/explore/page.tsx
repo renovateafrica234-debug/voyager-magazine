@@ -19,8 +19,6 @@ const FALLBACKS = [
   'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400',
   'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400',
   'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=400',
-  'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=400',
-  'https://images.unsplash.com/photo-1523995462480-afd941d1d153?q=80&w=400',
 ];
 
 async function getData() {
@@ -36,8 +34,8 @@ async function getData() {
 
 const FB_TREND = [
   { id: '1', slug: 'lagos-lagoon-the-city-that-refuses-to-drown', title: 'Lagos Lagoon: The City That Refuses to Drown', cover_image: 'https://images.unsplash.com/photo-1503327776731-4970f83d0f2e?q=80&w=400', category: { name: 'Travel' } },
-  { id: '2', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', cover_image: '/images/zipp-republic.jpg', category: { name: 'Fashion' } },
-  { id: '3', slug: 'lagos-fashion-week-the-new-order', title: 'Lagos Fashion Week: The New Order', cover_image: '/images/lagos-fashion-week.jpg', category: { name: 'Fashion' } },
+  { id: '2', slug: 'zipp-republic-when-mr-p-turned-the-stage-into-a-runway', title: 'Zipp Republic: When Mr. P Turned the Stage into a Runway', cover_image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=400', category: { name: 'Fashion' } },
+  { id: '3', slug: 'lagos-fashion-week-the-new-order', title: 'Lagos Fashion Week: The New Order', cover_image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=400', category: { name: 'Fashion' } },
   { id: '4', slug: 'makoko-floating-school-the-architecture-of-necessity', title: 'Makoko Floating School: The Architecture of Necessity', cover_image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=400', category: { name: 'Architecture' } },
   { id: '5', slug: 'dunes-at-dawn-a-saharan-awakening', title: 'Dunes at Dawn: A Saharan Awakening', cover_image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=400', category: { name: 'Travel' } },
   { id: '6', slug: 'forest-bathing-in-the-atewa-range', title: 'Forest Bathing in the Atewa Range', cover_image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=400', category: { name: 'Wellness' } },
@@ -45,7 +43,19 @@ const FB_TREND = [
 
 export default async function ExplorePage() {
   const { cats, trend } = await getData();
-  const display = trend.length ? trend : FB_TREND;
+
+  const rawDisplay = trend.length ? trend : FB_TREND;
+  const display = rawDisplay.map((a: any, idx: number) => {
+    const fallback = FB_TREND.find((f: any) => f.slug === a.slug || f.id === String(a.id));
+    return {
+      ...a,
+      id: a.id || fallback?.id || idx,
+      slug: a.slug || a.id || fallback?.slug || '',
+      title: a.title || fallback?.title || 'Untitled',
+      cover_image: a.cover_image || a.image || fallback?.cover_image || FALLBACKS[idx % FALLBACKS.length],
+      category: a.category || fallback?.category || { name: 'Voyager' },
+    };
+  });
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
@@ -84,14 +94,16 @@ export default async function ExplorePage() {
             <Link key={a.id} href={`/article/${a.slug || a.id}`} className="flex gap-4 group">
               <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
                 <img
-                  src={a.cover_image || a.image || FALLBACKS[0]}
+                  src={a.cover_image}
                   alt={a.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               </div>
               <div className="flex-1 py-1">
-                <span className="text-[#C9A96E] text-[10px] tracking-wider uppercase">{a.category?.name || a.category || 'Voyager'}</span>
+                <span className="text-[#C9A96E] text-[10px] tracking-wider uppercase">
+                  {typeof a.category === 'string' ? a.category : a.category?.name || 'Voyager'}
+                </span>
                 <h3 className="text-sm font-serif leading-snug mt-1 group-hover:text-[#C9A96E] transition-colors">{a.title}</h3>
               </div>
             </Link>
@@ -100,5 +112,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-          }
-                  
+  }
+        
