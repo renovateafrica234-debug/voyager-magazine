@@ -17,13 +17,14 @@ export const metadata: Metadata = {
     title: "Voyager Magazine",
     description: "Explore African luxury, culture, and the art of journey.",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover",
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
   themeColor: "#0A0A0A",
 };
 
@@ -34,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-voyager-dark text-voyager-cream antialiased">
+      <body className="antialiased bg-[#0A0A0A] text-[#F2EDE4]">
         {children}
       </body>
     </html>
