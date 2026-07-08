@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -76,7 +77,7 @@ const articles = [
 ];
 
 const ads = [
-  { id: "ad1", title: "Emirates First Class", subtitle: "Abuja → Dubai from ₦2.4M", image: "/images/ad-emirates.jpg", cta: "Book Now" },
+  { id: "ad1", title: "Emirates First Class", subtitle: "Abuja ↔ Dubai from ₦2.4M", image: "/images/ad-emirates.jpg", cta: "Book Now" },
   { id: "ad2", title: "WhiteLion Voyage", subtitle: "Luxury African Expeditions", image: "/images/ad-whitelion.jpg", cta: "Explore" },
 ];
 
@@ -225,9 +226,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Art Gallery — Linked to Explore */}
+        {/* Art Gallery — Linked to /art */}
         <section className="px-5 mt-10">
-          <Link href="/explore" className="block relative h-[200px] rounded-xl overflow-hidden group">
+          <Link href="/art" className="block relative h-[200px] rounded-xl overflow-hidden group">
             <Image src="/images/art-gallery.jpg" alt="Art Gallery" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
@@ -286,5 +287,5 @@ export default function HomePage() {
       </nav>
     </main>
   );
-    }
+}
   
