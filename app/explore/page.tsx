@@ -67,7 +67,6 @@ export default async function ExplorePage() {
                 src={CAT_IMAGES[cat.name] || FALLBACKS[0]}
                 alt={cat.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onError={(e) => { (e.target as HTMLImageElement).src = FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)]; }}
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent" />
@@ -88,7 +87,6 @@ export default async function ExplorePage() {
                   src={a.cover_image || a.image || FALLBACKS[0]}
                   alt={a.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => { (e.target as HTMLImageElement).src = FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)]; }}
                   loading="lazy"
                 />
               </div>
@@ -102,5 +100,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-      }
-          
+          }
+                  
