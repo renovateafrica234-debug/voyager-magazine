@@ -123,8 +123,8 @@ export default function HomePage() {
       </header>
 
       <div className="pt-14 max-w-md mx-auto">
-        {/* Hero */}
-        <section className="relative h-[75vh] w-full overflow-hidden">
+        {/* Hero — now clickable */}
+        <section className="relative h-[75vh] w-full overflow-hidden cursor-pointer" onClick={() => router.push(`/article/${hero.id}`)}>
           <Image src={hero.image} alt={hero.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-[#0A0A0A]/10" />
           <div className="absolute top-6 left-5 flex flex-col gap-2">
@@ -136,7 +136,10 @@ export default function HomePage() {
             )}
           </div>
           {hero.video && (
-            <button onClick={() => setShowVideoModal(true)} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#C9A96E] flex items-center justify-center shadow-lg shadow-[#C9A96E]/30 hover:scale-105 transition-transform">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowVideoModal(true); }} 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#C9A96E] flex items-center justify-center shadow-lg shadow-[#C9A96E]/30 hover:scale-105 transition-transform"
+            >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8 5v14l11-7z"/></svg>
             </button>
           )}
@@ -287,5 +290,5 @@ export default function HomePage() {
       </nav>
     </main>
   );
-          }
-        
+        }
+      
