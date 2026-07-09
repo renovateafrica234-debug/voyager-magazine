@@ -1,128 +1,105 @@
-// app/profile/page.tsx
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { supabase } from "@/lib/supabase";
-import { Profile, PAYSTACK_PLANS } from "@/lib/types";
-import { User, Settings, CreditCard, LogOut, ChevronRight } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabaseClient } from '@/lib/supabase-client';
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
-    async function loadProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-      setProfile(data as Profile);
+    supabaseClient.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user || null);
       setLoading(false);
-    }
-    loadProfile();
+    });
+    const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+    return () => listener.subscription.unsubscribe();
   }, []);
 
-  const plan = PAYSTACK_PLANS.find((p) => p.tier === profile?.subscription_tier);
+  async function handleAuth(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    if (mode === 'login') {
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) setError(error.message);
+    } else {
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) setError(error.message);
+    }
+  }
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    setUser(null);
+  }
 
   if (loading) {
+    return <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center text-[#F2EDE4]">Loading...</div>;
+  }
+
+  if (!user) {
     return (
-      <main className="min-h-screen bg-voyager-dark flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-voyager-gold border-t-transparent rounded-full animate-spin" />
-      </main>
+      <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] flex items-center justify-center px-5">
+        <div className="w-full max-w-sm">
+          <h1 className="text-3xl font-serif text-[#C9A96E] text-center mb-2">VOYAGER</h1>
+          <p className="text-center text-xs tracking-[0.3em] uppercase text-[#F2EDE4]/50 mb-8">{mode === 'login' ? 'Sign In' : 'Create Account'}</p>
+          
+          <form onSubmit={handleAuth} className="space-y-4">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
+            />
+            {error && <p className="text-red-400 text-xs">{error}</p>}
+            <button type="submit" className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase">
+              {mode === 'login' ? 'Sign In' : 'Sign Up'}
+            </button>
+          </form>
+
+          <p className="text-center text-xs text-[#F2EDE4]/40 mt-4">
+            {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+            <button onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} className="text-[#C9A96E]">
+              {mode === 'login' ? 'Sign Up' : 'Sign In'}
+            </button>
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-voyager-dark pb-28">
-      <div className="p-4 pt-6 max-w-lg mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-16 h-16 rounded-full bg-voyager-gold/20 flex items-center justify-center">
-            <User className="w-8 h-8 text-voyager-gold" />
-          </div>
-          <div>
-            <h1 className="text-voyager-cream font-semibold text-lg">
-              {profile?.full_name || "Voyager Reader"}
-            </h1>
-            <p className="text-voyager-text-muted text-sm">
-              {plan?.name || "Free"} Plan
-            </p>
-          </div>
-        </div>
-
-        {/* Subscription Card */}
-        <div className="rounded-2xl bg-gradient-to-br from-voyager-gold/20 to-voyager-gold/5 border border-voyager-gold/20 p-5 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-voyager-gold font-semibold text-sm">Current Plan</span>
-            <span className="text-xs text-voyager-cream bg-voyager-gold/20 px-2 py-1 rounded-full">
-              {profile?.subscription_status || "inactive"}
-            </span>
-          </div>
-          <p className="text-voyager-cream text-2xl font-bold mb-1">
-            {plan ? `₦${plan.amountNgn}/mo` : "Free"}
-          </p>
-          <p className="text-voyager-text-secondary text-xs mb-4">
-            {plan?.description || "Basic access to free articles"}
-          </p>
-          <Link
-            href="/premium"
-            className="block w-full text-center rounded-full bg-voyager-gold py-2.5 text-sm font-semibold text-voyager-dark hover:bg-voyager-gold-light transition-colors"
-          >
-            {profile?.subscription_tier === "free" ? "Upgrade Plan" : "Manage Subscription"}
-          </Link>
-        </div>
-
-        {/* Menu */}
-        <div className="space-y-2">
-          {[
-            { label: "Reading History", icon: User, href: "#" },
-            { label: "Payment Methods", icon: CreditCard, href: "#" },
-            { label: "Settings", icon: Settings, href: "#" },
-          ].map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="flex items-center justify-between p-4 rounded-xl bg-voyager-dark-elevated border border-voyager-border text-voyager-cream hover:border-voyager-gold/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <item.icon className="w-5 h-5 text-voyager-text-muted" />
-                <span className="text-sm">{item.label}</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-voyager-text-muted" />
-            </Link>
-          ))}
-
-          <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              window.location.href = "/";
-            }}
-            className="w-full flex items-center gap-3 p-4 rounded-xl text-red-400 hover:bg-red-400/10 transition-colors mt-4"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm">Sign Out</span>
-          </button>
-        </div>
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] p-5 max-w-md mx-auto">
+      <h1 className="text-2xl font-serif text-[#C9A96E] mb-4">Profile</h1>
+      <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-6 mb-6">
+        <p className="text-sm text-[#F2EDE4]/60 mb-1">Signed in as</p>
+        <p className="text-white font-medium">{user.email}</p>
       </div>
-
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-voyager-border pb-safe">
-        <div className="flex items-center justify-around py-3 max-w-lg mx-auto">
-          {[
-            { href: "/", label: "Home" },
-            { href: "/explore", label: "Explore" },
-            { href: "/saved", label: "Saved" },
-            { href: "/profile", label: "Profile" },
-          ].map((item) => (
-            <Link key={item.href} href={item.href} className="text-voyager-text-muted hover:text-voyager-gold text-[10px]">
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      </nav>
-    </main>
+      <button
+        onClick={logout}
+        className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase"
+      >
+        Sign Out
+      </button>
+    </div>
   );
-            }
-                
+      }
+          
