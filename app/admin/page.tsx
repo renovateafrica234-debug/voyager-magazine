@@ -1,27 +1,40 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+import { 
+  FileText, 
+  Eye, 
+  Clock, 
+  CheckCircle2, 
+  TrendingUp,
+  AlertCircle,
+  ArrowUpRight,
+  Plus,
+  X,
+  Save,
+  Loader2
+} from 'lucide-react';
 
-interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  category?: { name: string };
-  category_id?: string;
-  created_at: string;
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-interface Category {
-  id: string;
-  name: string;
-}
-
-export default function AdminPage() {
-  const [password, setPassword] = useState("");
-  const [unlocked, setUnlocked] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    total: 0,
+    published: 0,
+    pending: 0,
+    drafts: 0,
+    views: 1247
+  });
+  const [recentArticles, setRecentArticles] = useState<any[]>([]);
+  const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
   const [form, setForm] = useState({
@@ -33,196 +46,244 @@ export default function AdminPage() {
     video_url: "",
     is_premium: false,
     is_trending: false,
+    status: "draft",
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("voyager_admin_pw");
-    if (saved) {
-      setPassword(saved);
-      setUnlocked(true);
-    }
+    fetchStats();
+    fetchCategories();
   }, []);
 
-  useEffect(() => {
-    if (!unlocked || !password) return;
-    fetchData();
-  }, [unlocked, password]);
+  async function fetchStats() {
+    const { data: all } = await supabase.from('articles').select('status');
+    const { data: pending } = await supabase
+      .from('articles')
+      .select('*, categories(name)')
+      .eq('status', 'pending')
+      .order('submitted_at', { ascending: false })
+      .limit(5);
+    const { data: recent } = await supabase
+      .from('articles')
+      .select('*, categories(name)')
+      .order('created_at', { ascending: false })
+      .limit(5);
 
-  const fetchData = async () => {
-    const headers = { "x-admin-password": password };
-    const [aRes, cRes] = await Promise.all([
-      fetch("/api/admin/articles", { headers }),
-      fetch("/api/admin/categories", { headers }),
-    ]);
-    const aData = await aRes.json();
-    const cData = await cRes.json();
-    if (aData.articles) setArticles(aData.articles);
-    if (cData.categories) setCategories(cData.categories);
-  };
+    const counts = all?.reduce((acc: any, curr: any) => {
+      acc[curr.status] = (acc[curr.status] || 0) + 1;
+      return acc;
+    }, {});
 
-  const unlock = () => {
-    localStorage.setItem("voyager_admin_pw", password);
-    setUnlocked(true);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("voyager_admin_pw");
-    setPassword("");
-    setUnlocked(false);
-    setArticles([]);
-    setCategories([]);
-  };
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    const res = await fetch("/api/admin/article", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-password": password,
-      },
-      body: JSON.stringify({ ...form, view_count: 0 }),
+    setStats({
+      total: all?.length || 0,
+      published: counts?.published || 0,
+      pending: counts?.pending || 0,
+      drafts: counts?.draft || 0,
+      views: 1247
     });
-
-    const data = await res.json();
-    setLoading(false);
-
-    if (data.success) {
-      setMessage("Article published successfully.");
-      setForm({
-        title: "",
-        slug: "",
-        content: "",
-        cover_image: "",
-        category_id: "",
-        video_url: "",
-        is_premium: false,
-        is_trending: false,
-      });
-      fetchData();
-    } else {
-      setMessage(data.error || "Failed to publish.");
-    }
-  };
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] flex items-center justify-center px-5">
-        <div className="w-full max-w-sm">
-          <h1 className="text-3xl font-serif text-[#C9A96E] text-center mb-2">VOYAGER</h1>
-          <p className="text-center text-xs tracking-[0.3em] uppercase text-[#F2EDE4]/50 mb-8">Admin Panel</p>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Admin password"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm mb-4 focus:outline-none focus:border-[#C9A96E]"
-            onKeyDown={(e) => e.key === "Enter" && unlock()}
-          />
-          <button
-            onClick={unlock}
-            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase"
-          >
-            Enter
-          </button>
-        </div>
-      </div>
-    );
+    setPendingApprovals(pending || []);
+    setRecentArticles(recent || []);
   }
 
+  async function fetchCategories() {
+    const { data } = await supabase.from('categories').select('*').order('name');
+    setCategories(data || []);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    setMessage("");
+
+    const { data, error } = await supabase.from('articles').insert({
+      title: form.title,
+      slug: form.slug,
+      content: form.content,
+      cover_image: form.cover_image,
+      category_id: form.category_id,
+      video_url: form.video_url,
+      is_premium: form.is_premium,
+      is_trending: form.is_trending,
+      status: form.status,
+      view_count: 0,
+    }).select();
+
+    setSaving(false);
+
+    if (error) {
+      setMessage("Error: " + error.message);
+      return;
+    }
+
+    setMessage("Article published successfully.");
+    setForm({
+      title: "",
+      slug: "",
+      content: "",
+      cover_image: "",
+      category_id: "",
+      video_url: "",
+      is_premium: false,
+      is_trending: false,
+      status: "draft",
+    });
+    fetchStats();
+  }
+
+  const statCards = [
+    { label: 'Total Articles', value: stats.total, icon: FileText, color: 'text-[#C9A96E]' },
+    { label: 'Published', value: stats.published, icon: CheckCircle2, color: 'text-emerald-400' },
+    { label: 'Pending Review', value: stats.pending, icon: Clock, color: 'text-amber-400' },
+    { label: 'Total Views', value: stats.views, icon: Eye, color: 'text-blue-400' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
-      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-[#F2EDE4]/5">
-        <div className="max-w-md mx-auto px-5 h-14 flex items-center justify-between">
-          <span className="text-[#C9A96E] font-serif text-xl tracking-[0.25em]">ADMIN</span>
-          <button onClick={logout} className="text-xs text-[#F2EDE4]/50 hover:text-[#F2EDE4]">
-            Logout
-          </button>
-        </div>
-      </header>
+    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
+      
+      <div>
+        <h2 className="text-2xl font-semibold text-white mb-1">Dashboard</h2>
+        <p className="text-sm text-[#F2EDE4]/40">Overview of your editorial pipeline</p>
+      </div>
 
-      <div className="pt-20 max-w-md mx-auto px-5">
-        <h2 className="text-lg font-serif mb-4">New Article</h2>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {statCards.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+              <div className="flex items-center justify-between mb-3">
+                <Icon className={`w-5 h-5 ${stat.color}`} />
+                <TrendingUp className="w-3 h-3 text-[#F2EDE4]/20" />
+              </div>
+              <p className="text-2xl font-semibold text-white">{stat.value}</p>
+              <p className="text-[11px] text-[#F2EDE4]/40 mt-1">{stat.label}</p>
+            </div>
+          );
+        })}
+      </div>
 
-        {message && (
-          <p className={`text-sm mb-4 ${message.includes("success") ? "text-[#C9A96E]" : "text-red-400"}`}>
-            {message}
-          </p>
-        )}
+      {/* New Article Toggle */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium text-white">Editor</h3>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C9A96E]/10 border border-[#C9A96E]/20 text-[#C9A96E] text-[11px] font-medium hover:bg-[#C9A96E]/20 transition-colors"
+        >
+          {showForm ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+          {showForm ? 'Close' : 'New Article'}
+        </button>
+      </div>
 
-        <form onSubmit={submit} className="space-y-4">
-          <input
-            required
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="Article title"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          />
+      {/* New Article Form */}
+      {showForm && (
+        <form onSubmit={handleSubmit} className="rounded-2xl bg-white/[0.03] border border-white/5 p-6 space-y-4">
+          {message && (
+            <div className={`text-sm px-4 py-3 rounded-lg ${message.includes('Error') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+              {message}
+            </div>
+          )}
 
-          <input
-            required
-            value={form.slug}
-            onChange={(e) => setForm({ ...form, slug: e.target.value })}
-            placeholder="Slug (e.g. lagos-lagoon-city)"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Title</label>
+              <input
+                required
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Article title"
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+              />
+            </div>
 
-          <select
-            required
-            value={form.category_id}
-            onChange={(e) => setForm({ ...form, category_id: e.target.value })}
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          >
-            <option value="">Select category</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Slug</label>
+              <input
+                required
+                value={form.slug}
+                onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                placeholder="lagos-lagoon-city"
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+              />
+            </div>
+          </div>
 
-          <input
-            value={form.cover_image}
-            onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-            placeholder="Cover image URL (Unsplash)"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Category</label>
+              <select
+                required
+                value={form.category_id}
+                onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
+              >
+                <option value="" className="bg-[#0A0A0A]">Select category</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-[#0A0A0A]">{c.name}</option>
+                ))}
+              </select>
+            </div>
 
-          <input
-            value={form.video_url}
-            onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-            placeholder="Video URL (optional)"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          />
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Status</label>
+              <select
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
+              >
+                <option value="draft" className="bg-[#0A0A0A]">Draft</option>
+                <option value="published" className="bg-[#0A0A0A]">Published</option>
+                <option value="pending" className="bg-[#0A0A0A]">Pending Review</option>
+              </select>
+            </div>
+          </div>
 
-          <textarea
-            required
-            value={form.content}
-            onChange={(e) => setForm({ ...form, content: e.target.value })}
-            placeholder="Article content (HTML or plain text)"
-            rows={8}
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A96E]"
-          />
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Cover Image URL</label>
+            <input
+              value={form.cover_image}
+              onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
+              placeholder="https://images.unsplash.com/..."
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Video URL (optional)</label>
+            <input
+              value={form.video_url}
+              onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+              placeholder="https://youtube.com/..."
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Content</label>
+            <textarea
+              required
+              value={form.content}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              placeholder="Article body..."
+              rows={8}
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
+          </div>
 
           <div className="flex gap-6 text-sm">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer text-[#F2EDE4]/60">
               <input
                 type="checkbox"
                 checked={form.is_premium}
                 onChange={(e) => setForm({ ...form, is_premium: e.target.checked })}
-                className="accent-[#C9A96E]"
+                className="accent-[#C9A96E] w-4 h-4"
               />
               Premium
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer text-[#F2EDE4]/60">
               <input
                 type="checkbox"
                 checked={form.is_trending}
                 onChange={(e) => setForm({ ...form, is_trending: e.target.checked })}
-                className="accent-[#C9A96E]"
+                className="accent-[#C9A96E] w-4 h-4"
               />
               Trending
             </label>
@@ -230,28 +291,94 @@ export default function AdminPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50"
+            disabled={saving}
+            className="flex items-center justify-center gap-2 w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50"
           >
-            {loading ? "Publishing..." : "Publish Article"}
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? 'Publishing...' : 'Publish Article'}
           </button>
         </form>
+      )}
 
-        <h2 className="text-lg font-serif mt-10 mb-4">Existing Articles</h2>
-        <div className="space-y-3">
-          {articles.length === 0 && (
-            <p className="text-sm text-[#F2EDE4]/40">No articles found.</p>
-          )}
-          {articles.map((a) => (
-            <div key={a.id} className="bg-[#1a1a1a] rounded-lg p-4 border border-[#333]">
-              <p className="font-medium text-sm">{a.title}</p>
-              <p className="text-xs text-[#F2EDE4]/50 mt-1">
-                {a.slug} • {a.category?.name || a.category_id}
-              </p>
+      {/* Pending Approvals */}
+      <div className="rounded-2xl bg-white/[0.03] border border-white/5 overflow-hidden">
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-medium text-white">Pending Approvals</h3>
+            {stats.pending > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-medium">
+                {stats.pending}
+              </span>
+            )}
+          </div>
+          <Link href="/admin/approvals" className="text-[11px] text-[#C9A96E] flex items-center gap-1">
+            View all <ArrowUpRight className="w-3 h-3" />
+          </Link>
+        </div>
+        
+        {pendingApprovals.length === 0 ? (
+          <div className="p-8 text-center">
+            <CheckCircle2 className="w-8 h-8 text-emerald-500/30 mx-auto mb-2" />
+            <p className="text-sm text-[#F2EDE4]/30">All caught up. No pending approvals.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {pendingApprovals.map((article) => (
+              <div key={article.id} className="p-4 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-white truncate">{article.title}</h4>
+                  <p className="text-[11px] text-[#F2EDE4]/40">
+                    {article.categories?.name} · Submitted {new Date(article.submitted_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <Link 
+                  href={`/admin/approvals?id=${article.id}`}
+                  className="px-3 py-1.5 rounded-lg bg-[#C9A96E]/10 border border-[#C9A96E]/20 text-[#C9A96E] text-[11px] font-medium hover:bg-[#C9A96E]/20 transition-colors"
+                >
+                  Review
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Recent Articles */}
+      <div className="rounded-2xl bg-white/[0.03] border border-white/5 overflow-hidden">
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <h3 className="text-sm font-medium text-white">Recent Articles</h3>
+          <button 
+            onClick={() => setShowForm(true)}
+            className="text-[11px] text-[#C9A96E] flex items-center gap-1"
+          >
+            New Article <ArrowUpRight className="w-3 h-3" />
+          </button>
+        </div>
+        <div className="divide-y divide-white/5">
+          {recentArticles.map((article) => (
+            <div key={article.id} className="p-4 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
+              <div className={`w-2 h-2 rounded-full shrink-0 ${
+                article.status === 'published' ? 'bg-emerald-500' :
+                article.status === 'pending' ? 'bg-amber-500' :
+                'bg-[#F2EDE4]/20'
+              }`} />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-medium text-white truncate">{article.title}</h4>
+                <p className="text-[11px] text-[#F2EDE4]/40 capitalize">{article.status} · {article.categories?.name}</p>
+              </div>
+              <span className="text-[11px] text-[#F2EDE4]/30">
+                {new Date(article.created_at).toLocaleDateString()}
+              </span>
             </div>
           ))}
         </div>
       </div>
+
     </div>
   );
-          }
+      }
+      
