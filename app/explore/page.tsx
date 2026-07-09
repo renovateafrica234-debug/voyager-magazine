@@ -44,14 +44,14 @@ const FB_TREND = [
 export default async function ExplorePage() {
   const { cats, trend } = await getData();
 
-  const display = trend.length ? trend.map((a: any, idx: number) => {
+  const display = trend.length ? trend.map((item: any, idx: number) => {
     const fallback = FB_TREND[idx % FB_TREND.length];
     return {
-      id: a.id ?? fallback.id,
-      slug: a.slug ?? a.id ?? fallback.slug,
-      title: a.title ?? fallback.title,
+      id: item.id ?? fallback.id,
+      slug: item.slug ?? item.id ?? fallback.slug,
+      title: item.title ?? fallback.title,
       cover_image: fallback.cover_image,
-      category: a.category ?? fallback.category,
+      category: item.category ?? fallback.category,
     };
   }) : FB_TREND;
 
@@ -72,7 +72,7 @@ export default async function ExplorePage() {
           {cats.map((cat: any) => (
             <Link key={cat.id} href={`/category/${cat.slug}`} className="relative h-[100px] rounded-xl overflow-hidden group">
               <img
-                src={a.cover_image}
+                src={CAT_IMAGES[cat.name] || FALLBACKS[0]}
                 alt={cat.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
@@ -88,21 +88,21 @@ export default async function ExplorePage() {
 
         <h2 className="text-[11px] tracking-[0.25em] uppercase text-[#F2EDE4]/70 font-medium mt-8 mb-4">Trending</h2>
         <div className="space-y-4">
-          {display.map((a: any) => (
-            <Link key={a.id} href={`/article/${a.slug || a.id}`} className="flex gap-4 group">
+          {display.map((item: any) => (
+            <Link key={item.id} href={`/article/${item.slug || item.id}`} className="flex gap-4 group">
               <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
                 <img
-                  src={a.cover_image}
-                  alt={a.title}
+                  src={item.cover_image}
+                  alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               </div>
               <div className="flex-1 py-1">
                 <span className="text-[#C9A96E] text-[10px] tracking-wider uppercase">
-                  {typeof a.category === 'string' ? a.category : a.category?.name || 'Voyager'}
+                  {typeof item.category === 'string' ? item.category : item.category?.name || 'Voyager'}
                 </span>
-                <h3 className="text-sm font-serif leading-snug mt-1 group-hover:text-[#C9A96E] transition-colors">{a.title}</h3>
+                <h3 className="text-sm font-serif leading-snug mt-1 group-hover:text-[#C9A96E] transition-colors">{item.title}</h3>
               </div>
             </Link>
           ))}
@@ -110,5 +110,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-                  }
-                    
+                }
+                  
