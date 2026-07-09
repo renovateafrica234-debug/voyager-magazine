@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
+function getYouTubeEmbedUrl(url: string): string {
+  if (!url) return "";
+  if (url.includes("/embed/")) return url;
+  const match = url.match(/(?:youtu\.be\/|v=|\/v\/)([a-zA-Z0-9_-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+}
+
 const articles = [
   {
     id: "obi-cubana",
@@ -123,7 +130,7 @@ export default function HomePage() {
       </header>
 
       <div className="pt-14 max-w-md mx-auto">
-        {/* Hero — now clickable */}
+        {/* Hero */}
         <section className="relative h-[75vh] w-full overflow-hidden cursor-pointer" onClick={() => router.push(`/article/${hero.id}`)}>
           <Image src={hero.image} alt={hero.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-[#0A0A0A]/10" />
@@ -252,7 +259,7 @@ export default function HomePage() {
           <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <div className="relative pt-[56.25%] rounded-xl overflow-hidden">
               <iframe
-                src={hero.videoUrl}
+                src={getYouTubeEmbedUrl(hero.videoUrl)}
                 title="Video Story"
                 className="absolute inset-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -290,5 +297,4 @@ export default function HomePage() {
       </nav>
     </main>
   );
-        }
-      
+}
