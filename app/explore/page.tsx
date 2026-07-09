@@ -48,7 +48,6 @@ export default async function ExplorePage() {
   const display = trend.length ? trend.map((a: any, idx: number) => {
     const fallback = FB_TREND[idx % FB_TREND.length];
     return {
-      ...a,
       id: a.id || fallback.id,
       slug: a.slug || a.id || fallback.slug,
       title: a.title || fallback.title,
@@ -112,5 +111,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-                }
-              
+                  }
+          
