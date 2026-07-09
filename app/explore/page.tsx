@@ -44,15 +44,15 @@ const FB_TREND = [
 export default async function ExplorePage() {
   const { cats, trend } = await getData();
 
-  // FORCE fallback Unsplash images so nothing ever renders broken
+  // FORCE fallback images — never trust empty Supabase cover_image
   const display = trend.length ? trend.map((a: any, idx: number) => {
     const fallback = FB_TREND[idx % FB_TREND.length];
     return {
-      id: a.id || fallback.id,
-      slug: a.slug || a.id || fallback.slug,
-      title: a.title || fallback.title,
+      id: a.id ?? fallback.id,
+      slug: a.slug ?? a.id ?? fallback.slug,
+      title: a.title ?? fallback.title,
       cover_image: fallback.cover_image,
-      category: a.category || fallback.category,
+      category: a.category ?? fallback.category,
     };
   }) : FB_TREND;
 
@@ -111,5 +111,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-              }
-                  
+                  }
+                    
