@@ -25,9 +25,13 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState('');
 
   const [form, setForm] = useState({
-    title: '', slug: '', content: '', cover_image: '',
-    category_id: '', video_url: '', is_premium: false,
-    is_trending: false, status: 'draft',
+    title: '',
+    slug: '',
+    content: '',
+    cover_image: '',
+    category_id: '',
+    video_url: '',
+    status: 'draft',
   });
 
   useEffect(() => {
@@ -49,28 +53,32 @@ export default function AdminDashboard() {
       setUnlocked(true);
       setLoginError('');
     } else {
-      setLoginError(`Wrong password. You typed: "${password}" (expected: ${ADMIN_PASS})`);
+      setLoginError(`Wrong password. You typed: "${password}"`);
     }
   }
 
   async function fetchStats() {
-    const { data: all } = await supabase.from('articles').select('status');
-    const { data: recent } = await supabase
-      .from('articles').select('*, categories(name)')
-      .order('created_at', { ascending: false }).limit(5);
+    try {
+      const { data: all } = await supabase.from('articles').select('status');
+      const { data: recent } = await supabase
+        .from('articles').select('*, categories(name)')
+        .order('created_at', { ascending: false }).limit(5);
 
-    const counts = all?.reduce((acc: any, curr: any) => {
-      acc[curr.status] = (acc[curr.status] || 0) + 1;
-      return acc;
-    }, {});
+      const counts = all?.reduce((acc: any, curr: any) => {
+        acc[curr.status] = (acc[curr.status] || 0) + 1;
+        return acc;
+      }, {});
 
-    setStats({
-      total: all?.length || 0,
-      published: counts?.published || 0,
-      pending: counts?.pending || 0,
-      drafts: counts?.draft || 0,
-    });
-    setRecentArticles(recent || []);
+      setStats({
+        total: all?.length || 0,
+        published: counts?.published || 0,
+        pending: counts?.pending || 0,
+        drafts: counts?.draft || 0,
+      });
+      setRecentArticles(recent || []);
+    } catch (e) {
+      console.error('Stats error:', e);
+    }
   }
 
   async function fetchCategories() {
@@ -90,19 +98,22 @@ export default function AdminDashboard() {
       cover_image: form.cover_image,
       category_id: form.category_id,
       video_url: form.video_url,
-      is_premium: form.is_premium,
-      is_trending: form.is_trending,
       status: form.status,
       view_count: 0,
     });
 
     setSaving(false);
-    if (error) { setMessage('Error: ' + error.message); return; }
+
+    if (error) {
+      setMessage('Error: ' + error.message);
+      return;
+    }
 
     setMessage('Article published successfully.');
-    setForm({ title: '', slug: '', content: '', cover_image: '',
-      category_id: '', video_url: '', is_premium: false,
-      is_trending: false, status: 'draft' });
+    setForm({
+      title: '', slug: '', content: '', cover_image: '',
+      category_id: '', video_url: '', status: 'draft',
+    });
     fetchStats();
   }
 
@@ -197,38 +208,96 @@ export default function AdminDashboard() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
-            <input required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Title</label>
+              <input
+                required
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Article title"
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Slug</label>
+              <input
+                required
+                value={form.slug}
+                onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                placeholder="lagos-lagoon-city"
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select required value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50">
-              <option value="" className="bg-[#0A0A0A]">Category</option>
-              {categories.map((c) => <option key={c.id} value={c.id} className="bg-[#0A0A0A]">{c.name}</option>)}
-            </select>
-            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50">
-              <option value="draft" className="bg-[#0A0A0A]">Draft</option>
-              <option value="published" className="bg-[#0A0A0A]">Published</option>
-              <option value="pending" className="bg-[#0A0A0A]">Pending</option>
-            </select>
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Category</label>
+              <select
+                required
+                value={form.category_id}
+                onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
+              >
+                <option value="" className="bg-[#0A0A0A]">Select category</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-[#0A0A0A]">{c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Status</label>
+              <select
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
+              >
+                <option value="draft" className="bg-[#0A0A0A]">Draft</option>
+                <option value="published" className="bg-[#0A0A0A]">Published</option>
+                <option value="pending" className="bg-[#0A0A0A]">Pending</option>
+              </select>
+            </div>
           </div>
 
-          <input value={form.cover_image} onChange={(e) => setForm({ ...form, cover_image: e.target.value })} placeholder="Cover image URL (Unsplash)" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
-          <input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="Video URL (optional)" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
-          <textarea required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="Article content" rows={6} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
-
-          <div className="flex gap-6 text-sm">
-            <label className="flex items-center gap-2 text-[#F2EDE4]/60">
-              <input type="checkbox" checked={form.is_premium} onChange={(e) => setForm({ ...form, is_premium: e.target.checked })} className="accent-[#C9A96E]" />
-              Premium
-            </label>
-            <label className="flex items-center gap-2 text-[#F2EDE4]/60">
-              <input type="checkbox" checked={form.is_trending} onChange={(e) => setForm({ ...form, is_trending: e.target.checked })} className="accent-[#C9A96E]" />
-              Trending
-            </label>
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Cover Image URL</label>
+            <input
+              value={form.cover_image}
+              onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
+              placeholder="https://images.unsplash.com/..."
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
           </div>
 
-          <button type="submit" disabled={saving} className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50">
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Video URL (optional)</label>
+            <input
+              value={form.video_url}
+              onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+              placeholder="https://youtube.com/..."
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[11px] text-[#F2EDE4]/40 uppercase tracking-wider">Content</label>
+            <textarea
+              required
+              value={form.content}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              placeholder="Article body..."
+              rows={8}
+              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50"
+          >
             {saving ? 'Publishing...' : 'Publish Article'}
           </button>
         </form>
@@ -239,18 +308,22 @@ export default function AdminDashboard() {
           <h3 className="text-sm font-medium text-white">Recent Articles</h3>
         </div>
         <div className="divide-y divide-white/5">
-          {recentArticles.length === 0 && <div className="p-8 text-center text-sm text-[#F2EDE4]/30">No articles yet.</div>}
+          {recentArticles.length === 0 && (
+            <div className="p-8 text-center text-sm text-[#F2EDE4]/30">No articles yet.</div>
+          )}
           {recentArticles.map((a) => (
             <div key={a.id} className="p-4 flex items-center justify-between">
               <div>
                 <h4 className="text-sm font-medium text-white">{a.title}</h4>
                 <p className="text-[11px] text-[#F2EDE4]/40 capitalize">{a.status} · {a.categories?.name}</p>
               </div>
-              <span className="text-[11px] text-[#F2EDE4]/30">{new Date(a.created_at).toLocaleDateString()}</span>
+              <span className="text-[11px] text-[#F2EDE4]/30">
+                {new Date(a.created_at).toLocaleDateString()}
+              </span>
             </div>
           ))}
         </div>
       </div>
     </div>
   );
-}
+    }
