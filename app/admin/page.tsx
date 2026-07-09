@@ -12,6 +12,7 @@ const ADMIN_PASS = 'voyager2026';
 
 export default function AdminDashboard() {
   const [password, setPassword] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -24,19 +25,15 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState('');
 
   const [form, setForm] = useState({
-    title: '',
-    slug: '',
-    content: '',
-    cover_image: '',
-    category_id: '',
-    video_url: '',
-    is_premium: false,
-    is_trending: false,
-    status: 'draft',
+    title: '', slug: '', content: '', cover_image: '',
+    category_id: '', video_url: '', is_premium: false,
+    is_trending: false, status: 'draft',
   });
 
   useEffect(() => {
-    if (localStorage.getItem('voyager_admin') === 'ok') setUnlocked(true);
+    try {
+      if (localStorage.getItem('voyager_admin') === 'ok') setUnlocked(true);
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -46,22 +43,21 @@ export default function AdminDashboard() {
   }, [unlocked]);
 
   function login() {
-    if (password === ADMIN_PASS) {
-      localStorage.setItem('voyager_admin', 'ok');
+    const clean = password.trim().toLowerCase();
+    if (clean === ADMIN_PASS) {
+      try { localStorage.setItem('voyager_admin', 'ok'); } catch {}
       setUnlocked(true);
       setLoginError('');
     } else {
-      setLoginError('Wrong password');
+      setLoginError(`Wrong password. You typed: "${password}" (expected: ${ADMIN_PASS})`);
     }
   }
 
   async function fetchStats() {
     const { data: all } = await supabase.from('articles').select('status');
     const { data: recent } = await supabase
-      .from('articles')
-      .select('*, categories(name)')
-      .order('created_at', { ascending: false })
-      .limit(5);
+      .from('articles').select('*, categories(name)')
+      .order('created_at', { ascending: false }).limit(5);
 
     const counts = all?.reduce((acc: any, curr: any) => {
       acc[curr.status] = (acc[curr.status] || 0) + 1;
@@ -101,18 +97,12 @@ export default function AdminDashboard() {
     });
 
     setSaving(false);
-
-    if (error) {
-      setMessage('Error: ' + error.message);
-      return;
-    }
+    if (error) { setMessage('Error: ' + error.message); return; }
 
     setMessage('Article published successfully.');
-    setForm({
-      title: '', slug: '', content: '', cover_image: '',
+    setForm({ title: '', slug: '', content: '', cover_image: '',
       category_id: '', video_url: '', is_premium: false,
-      is_trending: false, status: 'draft',
-    });
+      is_trending: false, status: 'draft' });
     fetchStats();
   }
 
@@ -122,21 +112,38 @@ export default function AdminDashboard() {
         <div className="w-full max-w-sm">
           <h1 className="text-3xl font-serif text-[#C9A96E] text-center mb-2">VOYAGER</h1>
           <p className="text-center text-xs tracking-[0.3em] uppercase text-[#F2EDE4]/50 mb-8">Admin</p>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm mb-3 focus:outline-none focus:border-[#C9A96E]"
-            onKeyDown={(e) => e.key === 'Enter' && login()}
-          />
-          {loginError && <p className="text-red-400 text-xs mb-3">{loginError}</p>}
+
+          <div className="relative">
+            <input
+              type={showPw ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              autoCapitalize="none"
+              autoCorrect="off"
+              className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-sm pr-20 focus:outline-none focus:border-[#C9A96E]"
+              onKeyDown={(e) => e.key === 'Enter' && login()}
+            />
+            <button
+              onClick={() => setShowPw(!showPw)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[#F2EDE4]/40 uppercase"
+            >
+              {showPw ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          {loginError && <p className="text-red-400 text-xs mt-3">{loginError}</p>}
+
           <button
             onClick={login}
-            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase"
+            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase mt-4"
           >
             Enter
           </button>
+
+          <p className="text-center text-[10px] text-[#F2EDE4]/20 mt-4">
+            Password: voyager2026 (all lowercase)
+          </p>
         </div>
       </div>
     );
@@ -150,7 +157,7 @@ export default function AdminDashboard() {
           <p className="text-sm text-[#F2EDE4]/40">Editorial pipeline</p>
         </div>
         <button
-          onClick={() => { localStorage.removeItem('voyager_admin'); setUnlocked(false); }}
+          onClick={() => { try { localStorage.removeItem('voyager_admin'); } catch {} setUnlocked(false); }}
           className="text-xs text-[#F2EDE4]/40 hover:text-white"
         >
           Logout
@@ -190,67 +197,25 @@ export default function AdminDashboard() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              required
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Title"
-              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
-            />
-            <input
-              required
-              value={form.slug}
-              onChange={(e) => setForm({ ...form, slug: e.target.value })}
-              placeholder="Slug"
-              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
-            />
+            <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
+            <input required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select
-              required
-              value={form.category_id}
-              onChange={(e) => setForm({ ...form, category_id: e.target.value })}
-              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
-            >
+            <select required value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50">
               <option value="" className="bg-[#0A0A0A]">Category</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[#0A0A0A]">{c.name}</option>
-              ))}
+              {categories.map((c) => <option key={c.id} value={c.id} className="bg-[#0A0A0A]">{c.name}</option>)}
             </select>
-            <select
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50"
-            >
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A96E]/50">
               <option value="draft" className="bg-[#0A0A0A]">Draft</option>
               <option value="published" className="bg-[#0A0A0A]">Published</option>
               <option value="pending" className="bg-[#0A0A0A]">Pending</option>
             </select>
           </div>
 
-          <input
-            value={form.cover_image}
-            onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-            placeholder="Cover image URL (Unsplash)"
-            className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
-          />
-
-          <input
-            value={form.video_url}
-            onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-            placeholder="Video URL (optional)"
-            className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
-          />
-
-          <textarea
-            required
-            value={form.content}
-            onChange={(e) => setForm({ ...form, content: e.target.value })}
-            placeholder="Article content"
-            rows={6}
-            className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50"
-          />
+          <input value={form.cover_image} onChange={(e) => setForm({ ...form, cover_image: e.target.value })} placeholder="Cover image URL (Unsplash)" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
+          <input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="Video URL (optional)" className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
+          <textarea required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="Article content" rows={6} className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#F2EDE4]/20 focus:outline-none focus:border-[#C9A96E]/50" />
 
           <div className="flex gap-6 text-sm">
             <label className="flex items-center gap-2 text-[#F2EDE4]/60">
@@ -263,11 +228,7 @@ export default function AdminDashboard() {
             </label>
           </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50"
-          >
+          <button type="submit" disabled={saving} className="w-full bg-[#C9A96E] text-[#0A0A0A] font-bold py-3 rounded-lg text-sm tracking-wider uppercase disabled:opacity-50">
             {saving ? 'Publishing...' : 'Publish Article'}
           </button>
         </form>
@@ -278,23 +239,19 @@ export default function AdminDashboard() {
           <h3 className="text-sm font-medium text-white">Recent Articles</h3>
         </div>
         <div className="divide-y divide-white/5">
-          {recentArticles.length === 0 && (
-            <div className="p-8 text-center text-sm text-[#F2EDE4]/30">No articles yet.</div>
-          )}
+          {recentArticles.length === 0 && <div className="p-8 text-center text-sm text-[#F2EDE4]/30">No articles yet.</div>}
           {recentArticles.map((a) => (
             <div key={a.id} className="p-4 flex items-center justify-between">
               <div>
                 <h4 className="text-sm font-medium text-white">{a.title}</h4>
                 <p className="text-[11px] text-[#F2EDE4]/40 capitalize">{a.status} · {a.categories?.name}</p>
               </div>
-              <span className="text-[11px] text-[#F2EDE4]/30">
-                {new Date(a.created_at).toLocaleDateString()}
-              </span>
+              <span className="text-[11px] text-[#F2EDE4]/30">{new Date(a.created_at).toLocaleDateString()}</span>
             </div>
           ))}
         </div>
       </div>
     </div>
   );
-}
-  
+                            }
+      
