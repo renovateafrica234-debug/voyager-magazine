@@ -44,7 +44,6 @@ const FB_TREND = [
 export default async function ExplorePage() {
   const { cats, trend } = await getData();
 
-  // FORCE fallback images — never trust empty Supabase cover_image
   const display = trend.length ? trend.map((a: any, idx: number) => {
     const fallback = FB_TREND[idx % FB_TREND.length];
     return {
@@ -73,7 +72,7 @@ export default async function ExplorePage() {
           {cats.map((cat: any) => (
             <Link key={cat.id} href={`/category/${cat.slug}`} className="relative h-[100px] rounded-xl overflow-hidden group">
               <img
-                src={CAT_IMAGES[cat.name] || FALLBACKS[0]}
+                src={a.cover_image}
                 alt={cat.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
