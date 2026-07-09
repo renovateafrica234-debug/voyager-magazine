@@ -44,18 +44,17 @@ const FB_TREND = [
 export default async function ExplorePage() {
   const { cats, trend } = await getData();
 
-  const rawDisplay = trend.length ? trend : FB_TREND;
-  const display = rawDisplay.map((a: any, idx: number) => {
-    const fallback = FB_TREND.find((f: any) => f.slug === a.slug || f.id === String(a.id));
+  // FORCE fallback Unsplash images so nothing ever renders broken
+  const display = trend.length ? trend.map((a: any, idx: number) => {
+    const fallback = FB_TREND[idx % FB_TREND.length];
     return {
-      ...a,
-      id: a.id || fallback?.id || idx,
-      slug: a.slug || a.id || fallback?.slug || '',
-      title: a.title || fallback?.title || 'Untitled',
-      cover_image: a.cover_image || a.image || fallback?.cover_image || FALLBACKS[idx % FALLBACKS.length],
-      category: a.category || fallback?.category || { name: 'Voyager' },
+      id: a.id || fallback.id,
+      slug: a.slug || a.id || fallback.slug,
+      title: a.title || fallback.title,
+      cover_image: fallback.cover_image,
+      category: a.category || fallback.category,
     };
-  });
+  }) : FB_TREND;
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#F2EDE4] pb-24">
@@ -112,5 +111,5 @@ export default async function ExplorePage() {
       </div>
     </main>
   );
-  }
-        
+                }
+              
